@@ -5,6 +5,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'homedecorindonesia.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.homedecorindonesia.com'
       }
     ]
   }

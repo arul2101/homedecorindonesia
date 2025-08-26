@@ -4,13 +4,35 @@ import React, { useState } from 'react';
 import { ChevronDown, User, ShoppingCart, Search, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
 import Logo from "@/public/img/Logo.png";
-import Link from 'next/link';
 
 export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const navigationItems = [
-    { name: 'Furniture', hasDropdown: true },
+    { name: 'Furniture', hasDropdown: true,
+      items: [
+        {
+          name: 'Living Room',
+          href: '#'
+        },
+        {
+          name: 'Bed Room',
+          href: '#'
+        },
+        {
+          name: 'Dining Room',
+          href: '#'
+        },
+        {
+          name: 'Home Office',
+          href: '#'
+        },
+        {
+          name: 'Accents',
+          href: '#'
+        }
+      ]
+     },
     {
       name: 'Lighting',
       hasDropdown: true,
@@ -122,12 +144,12 @@ export default function Header() {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/" className="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors whitespace-nowrap text-sm font-medium">
+                <a href="/" className="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors whitespace-nowrap text-sm font-medium">
                   <span>{item.name}</span>
                   {item.hasDropdown && (
                     <ChevronDown className="w-4 h-4" />
                   )}
-                </Link>
+                </a>
 
                 {/* Dropdown Menu */}
                 {item.hasDropdown && activeDropdown === index && (

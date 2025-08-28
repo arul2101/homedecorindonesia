@@ -9,6 +9,8 @@ import { motion as m, AnimatePresence } from "framer-motion";
 export default function NavLinks() {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [isHovered, setIsHovered] = useState(null); // use this to border bottom effect hovered
+  const [hoveredSubCategory, setHoveredSubCategory] = useState(null);
 
   const dropdownVariants = {
     hidden: {
@@ -71,15 +73,22 @@ export default function NavLinks() {
   return (
     <div className="border-t border-gray-200 border-b py-2">
       <div className="px-4">
-        <nav className="flex items-center gap-4 flex-wrap">
+        <nav className="flex items-center gap-4 flex-wrap font-light">
           {navlinks.map(item => (
             <div
               key={item.name}
               className="relative"
-              onMouseEnter={() => item.hasDropdown && setHoveredItem(item.name)}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={() => {
+                setHoveredItem(item.name)
+              }}
+              onMouseLeave={() => {
+                setHoveredItem(null)
+              }}
             >
-              <Link href={item.href} className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors duration-200">
+              <Link
+                href={item.href}
+                className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors duration-200 relative"
+              >
                 <span>{item.name}</span>
 
                 {item.hasDropdown && (
@@ -87,6 +96,12 @@ export default function NavLinks() {
                     className={`w-4 h-4 transition-transform duration-200 ${hoveredItem === item.name ? 'rotate-180' : ''}`} 
                   />
                 )}
+                <m.span
+                  className="absolute bottom-0 left-0 h-[.7px] bg-gray-800 origin-left w-[80%]"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: hoveredItem === item.name ? 1 : 0 }}
+                  transition={{ duration: .2, ease: "easeOut" }}
+                />
               </Link>
 
               <AnimatePresence>
@@ -96,18 +111,33 @@ export default function NavLinks() {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 min-w-48"
+                    className="absolute top-full left-0 mt-2 bg-white border border-gray-200 shadow-xl z-50 min-w-48 p-2"
                   >
                     <div className="p-2">
                       {item.sublinks.map((category) => (
                         <div
                           key={category.name}
                           className="relative"
-                          onMouseEnter={() => category.hasDropdown && setHoveredCategory(category.name)}
-                          onMouseLeave={() => setHoveredCategory(null)}
+                          onMouseEnter={() => {
+                            if (category.hasDropdown) {
+                              setHoveredCategory(category.name)
+                            }
+
+                            setIsHovered(category.name)
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredCategory(null)
+                            setIsHovered(null)
+                          }}
                         >
-                          <Link href={category.href} className="block px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors duration-150">
+                          <Link href={category.href} className="text-sm rounded transition-colors duration-150 relative">
                             {category.name}
+                            <m.span
+                              className="absolute bottom-0 left-0 h-[1px] bg-gray-800 origin-left w-[100%]"
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: isHovered === category.name ? 1 : 0 }}
+                              transition={{ duration: .2, ease: "easeOut" }}
+                            />
                           </Link>
 
                           <AnimatePresence>
@@ -117,11 +147,9 @@ export default function NavLinks() {
                                 initial="hidden"
                                 animate="visible"
                                 exit="exit"
-                                className="absolute top-0 left-full ml-1 bg-white border border-gray-200 rounded-lg shadow-xl z-60 min-w-56"
+                                className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl z-60 min-w-56"
                               >
                                 <div className="p-3">
-                                  <h3 className="font-semibold text-gray-900 text-sm mb-3 border-b border-gray-100 pb-2">{category.name}</h3>
-
                                   <ul className="space-y-1">
                                     {category.sublinks.map((subItem, subIndex) => (
                                       <m.li
@@ -131,10 +159,17 @@ export default function NavLinks() {
                                         initial="hidden"
                                         animate="visible"
                                       >
-                                        <Link
-                                          href={subItem.href}
-                                          className="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1.5 rounded transition-colors duration-150"
-                                        >{subItem.name}</Link>
+                                        <Link href={subItem.href} className="mb-2 text-sm rounded transition-colors duration-150 relative" onMouseEnter={() => setHoveredSubCategory(subItem.name)}
+                                        onMouseLeave={() => setHoveredSubCategory(null)}>
+                                          {subItem.name}
+                                        
+                                          <m.span
+                                            className="absolute bottom-0 left-0 h-[1px] bg-gray-800 origin-left w-[100%]"
+                                            initial={{ scaleX: 0 }}
+                                            animate={{ scaleX: hoveredSubCategory === subItem.name ? 1 : 0 }}
+                                            transition={{ duration: .2, ease: "easeOut" }}
+                                          />
+                                        </Link>
                                       </m.li>
                                     ))}
                                   </ul>

@@ -40,7 +40,7 @@ export default async function BedSetsPage() {
 		<main className="max-w-7xl mx-auto px-4 py-8">
 			<h1 className="text-2xl font-semibold mb-4">Bed Sets</h1>
 			{!categoryId ? (
-				<p className="text-sm text-gray-500">Kategori "Bedsets" tidak ditemukan.</p>
+				<p className="text-sm text-gray-500">Kategori <q>Bedsets</q> tidak ditemukan.</p>
 			) : (
 				<ProductsGrid products={products} />
 			)}

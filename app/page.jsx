@@ -11,15 +11,11 @@ export default async function Home() {
 
   return (
     <>
-<<<<<<< HEAD
-      {/* <WallpaperShowroomCarousel /> */}
-=======
       <WallpaperShowroomCarousel />
       <CategorySection />
       <ShopByRoom />
       <ShopByFabrics />
       <ProductsGrid products={products} />
->>>>>>> 942724faf3befa812c72a14b332f7ec0437e6300
     </>
   );
 }

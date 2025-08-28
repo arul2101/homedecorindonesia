@@ -4,81 +4,154 @@ import { navlinks } from "@/constant"
 import { ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react";
+import { motion as m, AnimatePresence } from "framer-motion";
 
 export default function NavLinks() {
-  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [hoveredItem, setHoveredItem] = useState(null);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
 
-  const handleMouseEnter = (index) => {
-    if(navlinks[index].hasDropdown) {
-      setActiveDropdown(index)
+  const dropdownVariants = {
+    hidden: {
+      opacity: 0,
+      x: 30,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      x: 30,
+      transition: {
+        duration: 0.15,
+        ease: "easeIn"
+      }
     }
-  }
+  };
 
-  const handleMouseLeave = () => {
-    setActiveDropdown(null)
-  }
+  const subDropdownVariants = {
+    hidden: {
+      opacity: 0,
+      x: 30,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.15,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      x: 30,
+      transition: {
+        duration: 0.1,
+        ease: "easeIn"
+      }
+    }
+  };
 
-  const data = navlinks[activeDropdown];
+  const itemVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: (i) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: i * 0.02,
+        duration: 0.2
+      }
+    })
+  };
 
   return (
-    <nav className="border-t border-gray-200 border-b py-2">
+    <div className="border-t border-gray-200 border-b py-2">
       <div className="px-4">
-        <div className="flex items-center gap-4 flex-wrap group">
-          {navlinks.map((link, index) => (
-            <div key={index}>
-              <div
-                className="relative"
-                onMouseEnter={() => handleMouseEnter(index)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <Link href="/" className="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors whitespace-nowrap text-sm font-medium">
-                  <span>{link.name}</span>
-                  {link.hasDropdown && (
-                    <ChevronDown className="w-4 h-4 md:block hidden group-hover:rotate-180" />
-                  )}
-                </Link>
+        <nav className="flex items-center gap-4 flex-wrap">
+          {navlinks.map(item => (
+            <div
+              key={item.name}
+              className="relative"
+              onMouseEnter={() => item.hasDropdown && setHoveredItem(item.name)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
+              <Link href={item.href} className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors duration-200">
+                <span>{item.name}</span>
 
-                {link.hasDropdown && (
-                  <div className="absolute top-8 group-hover:md:block hover:md:block hidden z-[9999]">
-                    <div className="bg-white shadow-md rounded-md border-gray-200 p-3.5">
-                      {link.sublinks?.map((subItem, subIndex) => (
-                        <Link key={subIndex} href={subItem.href}>
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                {item.hasDropdown && (
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${hoveredItem === item.name ? 'rotate-180' : ''}`} 
+                  />
                 )}
+              </Link>
 
-                {/* {data && (
-                  <div className="absolute top-8 left-0 mt-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-[9999]">
-                    <div
-                      className="py-2"
-                      onMouseEnter={() => {}}
-                      onMouseLeave={() => {}}
-                    >
-                      {link.sublinks?.map((subItem, subIndex) => (
-                        <Link
-                          key={subIndex}
-                          href={subItem.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-amber-600 transition-colors"
+              <AnimatePresence>
+                {item.hasDropdown && hoveredItem === item.name && (
+                  <m.div
+                    variants={dropdownVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 min-w-48"
+                  >
+                    <div className="p-2">
+                      {item.sublinks.map((category) => (
+                        <div
+                          key={category.name}
+                          className="relative"
+                          onMouseEnter={() => category.hasDropdown && setHoveredCategory(category.name)}
+                          onMouseLeave={() => setHoveredCategory(null)}
                         >
-                          {subItem.name}
-                        </Link>
+                          <Link href={category.href} className="block px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors duration-150">
+                            {category.name}
+                          </Link>
+
+                          <AnimatePresence>
+                            {category.hasDropdown && hoveredCategory === category.name && (
+                              <m.div
+                                variants={subDropdownVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                className="absolute top-0 left-full ml-1 bg-white border border-gray-200 rounded-lg shadow-xl z-60 min-w-56"
+                              >
+                                <div className="p-3">
+                                  <h3 className="font-semibold text-gray-900 text-sm mb-3 border-b border-gray-100 pb-2">{category.name}</h3>
+
+                                  <ul className="space-y-1">
+                                    {category.sublinks.map((subItem, subIndex) => (
+                                      <m.li
+                                        key={subItem.name}
+                                        custom={subIndex}
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                      >
+                                        <Link
+                                          href={subItem.href}
+                                          className="block text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-2 py-1.5 rounded transition-colors duration-150"
+                                        >{subItem.name}</Link>
+                                      </m.li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </m.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       ))}
                     </div>
-                  </div>
-                )} */}
-              </div>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
-        </div>
+        </nav>
       </div>
-      {/* {navlinks.map((link, index) => (
-        <Link href={link.href}>
-
-        </Link>
-      ))} */}
-    </nav>
+    </div>
   )
 }

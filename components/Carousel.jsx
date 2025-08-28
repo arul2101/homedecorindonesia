@@ -4,46 +4,46 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-  const slides = [
-    {
-      id: 1,
-      title: "CLEARANCE",
-      subtitle: "SALE",
-      discount: "UP TO 70%",
-      buttonText: "SHOP NOW",
-      type: "clearance",
-      mainImage: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=800&fit=crop",
-      productImages: [
-        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400&h=300&fit=crop"
-      ]
-    },
-    {
-      id: 2,
-      title: "NEW",
-      subtitle: "ARRIVALS",
-      discount: "FRESH DESIGNS",
-      buttonText: "EXPLORE",
-      type: "new-arrivals",
-      mainImage: "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=1200&h=800&fit=crop",
-      productImages: [
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1493663284031-b7e3aeca4018?w=400&h=300&fit=crop"
-      ]
-    },
-    {
-      id: 3,
-      title: "PREMIUM",
-      subtitle: "COLLECTION",
-      discount: "LUXURY PIECES",
-      buttonText: "VIEW ALL",
-      type: "premium",
-      mainImage: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&h=800&fit=crop",
-      productImages: [
-        "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1571898837421-4f8d9d90c6f3?w=400&h=300&fit=crop"
-      ]
-    }
+const slides = [
+  {
+    id: 1,
+    title: "CLEARANCE",
+    subtitle: "SALE",
+    discount: "UP TO 70%",
+    buttonText: "SHOP NOW",
+    type: "clearance",
+    mainImage: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=800&fit=crop",
+    productImages: [
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400&h=300&fit=crop"
+    ]
+  },
+  {
+    id: 2,
+    title: "NEW",
+    subtitle: "ARRIVALS",
+    discount: "FRESH DESIGNS",
+    buttonText: "EXPLORE",
+    type: "new-arrivals",
+    mainImage: "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=1200&h=800&fit=crop",
+    productImages: [
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1493663284031-b7e3aeca4018?w=400&h=300&fit=crop"
+    ]
+  },
+  {
+    id: 3,
+    title: "PREMIUM",
+    subtitle: "COLLECTION",
+    discount: "LUXURY PIECES",
+    buttonText: "VIEW ALL",
+    type: "premium",
+    mainImage: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&h=800&fit=crop",
+    productImages: [
+      "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1571898837421-4f8d9d90c6f3?w=400&h=300&fit=crop"
+    ]
+  }
 ];
 
 export default function Carousel() {

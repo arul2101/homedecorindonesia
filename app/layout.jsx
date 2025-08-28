@@ -3,6 +3,7 @@ import "./globals.css";
 import { Poppins } from "next/font/google";
 import localFont from 'next/font/local';
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const futuraBook = localFont({
   src: './fonts/Futura-Book.ttf',
@@ -53,6 +54,7 @@ export default function RootLayout({ children }) {
         <Theme>
           <Header />
           {children}
+          <Footer />
         </Theme>
       </body>
     </html>

@@ -103,3 +103,227 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Category Section Styles */
+.hd-cats {
+  width: 100vw;
+  margin: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 10px 30px 40px 30px;
+}
+
+.hd-cats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.hd-cat {
+  display: block;
+  position: relative;
+  margin: 10px;
+  padding: 280px 20px 40px 20px;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.hd-cat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.55) 100%);
+}
+
+.hd-cat__title {
+  position: relative;
+  z-index: 1;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.hd-cat__btn {
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.hd-cat__btn:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.45);
+}
+
+@media (max-width: 1100px) {
+  .hd-cats__grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (max-width: 560px) {
+  .hd-cats__grid { 
+    grid-template-columns: 1fr; 
+  }
+  .hd-cat { 
+    padding: 220px 16px 28px 16px; 
+  }
+}
+
+/* Shop By Room Section Styles */
+.hd-rooms {
+  width: 100vw;
+  margin: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 20px 60px 30px 60px;
+  background: #efefef;
+}
+
+.hd-rooms__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.room-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 0 0;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+.room-card.is-in { opacity: 1; transform: translateX(0); }
+.room-card.fade-in-left { transform: translateX(-24px); }
+.room-card.fade-in-right { transform: translateX(24px); }
+
+.room-card__image {
+  display: block;
+  width: 100%;
+  height: 340px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+}
+
+.room-card__meta {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 12px;
+  max-width: 1160px;
+}
+.room-card__texts { font-family: 'Futura Book', Futura, Helvetica, Arial, sans-serif; }
+.room-card__eyebrow { font-size: 16px; color: #444; }
+.room-card__title { font-size: 16px; color: #111; }
+
+.room-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #c9c9c9;
+  background: #fff;
+  color: #111;
+}
+
+@media (max-width: 980px) {
+  .hd-rooms__grid { grid-template-columns: 1fr; }
+  .room-card { padding-right: 0; }
+}
+
+/* Shop By Fabrics Section Styles */
+.hd-fabrics {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 0 20px 50px 20px;
+}
+
+.hd-fabrics__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.fabric-hero {
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: bottom center;
+  margin: 10px;
+  padding: 20px 20px 40px 20px;
+  min-height: 520px;
+  color: #fff;
+  position: relative;
+}
+.fabric-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,.45), rgba(0,0,0,0) 45%);
+}
+.fabric-hero__inner { position: relative; z-index: 1; }
+.fabric-hero__title { font-size: 28px; margin: 0 0 8px 0; }
+
+.fabric-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+}
+.fabric-btn.is-light {
+  background: #fff;
+  color: #111;
+  border-color: #d9d9d9;
+}
+
+.fabric-list { display: flex; flex-direction: column; gap: 20px; }
+.fabric-card { display: flex; flex-direction: column; }
+.fabric-card__image {
+  width: 100%; height: 260px; background-size: cover; background-position: center; border-radius: 4px;
+}
+.fabric-card__meta {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 12px;
+}
+.fabric-card__texts { font-family: 'Futura Book', Futura, Helvetica, Arial, sans-serif; }
+.fabric-card__eyebrow { font-size: 14px; color: #444; }
+.fabric-card__title { font-size: 16px; color: #111; }
+
+.fade-up { opacity: 0; transform: translateY(20px); transition: opacity 600ms ease, transform 600ms ease; }
+.fade-up.is-in { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 980px) {
+  .hd-fabrics__grid { grid-template-columns: 1fr; }
+  .fabric-hero { min-height: 420px; }
+}

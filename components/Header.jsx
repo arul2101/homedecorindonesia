@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, User, ShoppingCart, Search, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import TopBar from './Header/TopBar';
 import MainHeader from './Header/MainHeader';
 import NavLinks from './Header/NavLinks';
@@ -13,7 +12,30 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const navigationItems = [
-    { name: 'Furniture', hasDropdown: true },
+    { name: 'Furniture', hasDropdown: true,
+      items: [
+        {
+          name: 'Living Room',
+          href: '#'
+        },
+        {
+          name: 'Bed Room',
+          href: '#'
+        },
+        {
+          name: 'Dining Room',
+          href: '#'
+        },
+        {
+          name: 'Home Office',
+          href: '#'
+        },
+        {
+          name: 'Accents',
+          href: '#'
+        }
+      ]
+     },
     {
       name: 'Lighting',
       hasDropdown: true,
@@ -69,12 +91,12 @@ export default function Header() {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                <Link href="/" className="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors whitespace-nowrap text-sm font-medium">
+                <a href="/" className="flex items-center gap-1 text-gray-700 hover:text-amber-600 transition-colors whitespace-nowrap text-sm font-medium">
                   <span>{item.name}</span>
                   {item.hasDropdown && (
                     <ChevronDown className="w-4 h-4" />
                   )}
-                </Link>
+                </a>
 
                 {item.hasDropdown && activeDropdown === index && (
                   <div className="absolute top-8 left-0 mt-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-999">

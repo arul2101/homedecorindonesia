@@ -73,7 +73,7 @@ export default function NavLinks() {
   return (
     <div className="border-t border-gray-200 border-b py-2 sm:block hidden">
       <div className="px-4">
-        <nav className="flex items-center gap-4 flex-wrap font-light">
+        <nav className="flex items-center gap-4 flex-wrap font-normal">
           {navlinks.map(item => (
             <div
               key={item.name}
@@ -87,7 +87,7 @@ export default function NavLinks() {
             >
               <Link
                 href={item.href}
-                className="flex items-center space-x-1 text-[.8rem] text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors duration-200 relative"
+                className="flex items-center space-x-1 text-[.8rem] text-gray-700 hover:text-gray-900 font-normal text-sm transition-colors duration-200 relative"
               >
                 <span>{item.name}</span>
 

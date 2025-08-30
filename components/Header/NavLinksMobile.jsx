@@ -144,7 +144,6 @@ export default function NavLinksMobile() {
   return (
     <div>
       <button onClick={toggleMenu} className="p-2 text-xl">
-        {/* <FiMenu /> */}
         <HamburgerIcon />
       </button>
 
@@ -161,7 +160,6 @@ export default function NavLinksMobile() {
         )}
       </AnimatePresence>
 
-      {/* Sidebar Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

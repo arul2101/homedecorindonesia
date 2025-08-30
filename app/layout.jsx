@@ -4,19 +4,13 @@ import { Poppins } from "next/font/google";
 import localFont from 'next/font/local';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import WhatsAppFloating from "@/components/WhatsappFloating";
 
 const futuraBook = localFont({
   src: './fonts/Futura-Book.ttf',
   display: 'swap',
   variable: '--font-futura-book',
-  
 })
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ['300', '400', '700', '800'],
-  style: ['italic', 'normal']
-});
 
 export const metadata = {
   metadataBase: new URL('https://homedecorindonesia.com'),
@@ -49,11 +43,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${futuraBook.className} antialiased`}
+        className={`${futuraBook.variable} antialiased`}
       >
         <Theme>
           <Header />
           {children}
+          <WhatsAppFloating />
           <Footer />
         </Theme>
       </body>

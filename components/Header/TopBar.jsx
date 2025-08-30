@@ -1,5 +1,6 @@
 import { MapPin, Phone } from "lucide-react";
 import Link from "next/link";
+import { MdOutlinePhoneIphone } from "react-icons/md";
 
 export default function TopBar() {
   return (
@@ -8,10 +9,10 @@ export default function TopBar() {
         <div className="flex items-center justify-between h-12">
           <div className="flex items-center space-x-6 text-sm text-gray-600">
             <a href="https://api.whatsapp.com/send?phone=+6281806040506&text=Hello%21%20." className="flex items-center space-x-2" target="_blank">
-              <Phone className="w-4 h-4" />
+              <MdOutlinePhoneIphone className="w-4 h-4" />
               <span>+62 81806040506</span>
             </a>
-            <Link href='/contact' className="flex items-center space-x-2">
+            <Link href='/contact' className="items-center space-x-2 sm:flex hidden">
               <MapPin className="w-4 h-4" />
               <span>Location</span>
             </Link>

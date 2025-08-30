@@ -15,12 +15,12 @@ export default function MainHeader() {
           <Image
             src={Logo}
             alt='Logo Homedecorindonesia'
-            className='w-[14rem]'
+            className='sm:w-[14rem] w-[10rem]'
           />
         </Link>
 
-        <div className="flex items-center space-x-6">
-          <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors">
+        <div className="flex items-center sm:space-x-6 space-x-2">
+          <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors sm:block hidden">
             <User className="w-6 h-6" />
           </button>
           <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors relative">

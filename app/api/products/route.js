@@ -19,7 +19,7 @@ export async function GET(request) {
 		};
 		if (category) params.category = String(category);
 		if (search) params.search = String(search);
-		const { data, headers } = await api.get("products", {}, { params });
+		const { data, headers } = await api.get("products", { params });
 		return NextResponse.json({
 			products: data,
 			pagination: {

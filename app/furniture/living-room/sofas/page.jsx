@@ -25,23 +25,22 @@ async function fetchJson(path) {
 
 
 async function getBedsCategoryId() {
-  let cats = await fetchJson(`/products/categories?slug=bedsets&per_page=1`);
+  let cats = await fetchJson(`/products/categories?slug=sofas&per_page=1`);
   if (Array.isArray(cats) && cats[0]?.id) return cats[0].id;
 
   cats = await fetchJson(`/products/categories?per_page=100`);
   if (!Array.isArray(cats)) return null;
 
-  let match = cats.find((c) => (c?.slug || '').toLowerCase() === 'bedsets');
+  let match = cats.find((c) => (c?.slug || '').toLowerCase() === 'sofas');
   if (match) return match.id;
-  match = cats.find((c) => (c?.name || '').toLowerCase().includes('bedsets'));
+  match = cats.find((c) => (c?.name || '').toLowerCase().includes('sofas'));
   if (match) return match.id;
-  match = cats.find((c) => (c?.name || '').toLowerCase().includes('beds'));
   return match ? match.id : null;
 }
 
 
 export const metadata = {
-  title: 'Bed Sets',
+  title: 'Sofa',
 };
 
 export default async function BedSetsPage() {
@@ -50,14 +49,14 @@ export default async function BedSetsPage() {
 
   if (categoryId) {
     const data = await fetchJson(
-      `/products?category=${categoryId}&per_page=100&page=1&orderby=date&order=desc`
+      `/products?category=${categoryId}&per_page=100`
     );
     products = Array.isArray(data) ? data : [];
   }
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-4">Bed Sets</h1>
+      <h1 className="text-2xl font-semibold mb-4">Sofa</h1>
 
       {!categoryId ? (
         <p className="text-sm text-gray-500">

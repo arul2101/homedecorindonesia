@@ -11,59 +11,59 @@ export const navlinks = [
         sublinks: [
           {
             name: 'Sofas',
-            href: '/product-category/furniture/sofas'
+            href: '/furniture/living-room/sofas'
           },
           {
             name: 'Sectional & Corner Sofas',
-            href: '/product-category/sectional-corner-sofas'
+            href: '/furniture/living-room/sectional-corner-sofas'
           },
           {
             name: 'Day Bed / Cleopatra',
-            href: '/product-category/cleopatra-day-beds'
+            href: '/furniture/living-room/cleopatra-day-beds'
           },
           {
             name: 'Arm Chairs',
-            href: '/product-category/furniture/arm-chairs'
+            href: '/furniture/living-room/arm-chairs'
           },
           {
             name: 'Side Table',
-            href: '/product-category/furniture/side-table'
+            href: '/furniture/living-room/side-table'
           },
           {
             name: 'Coffee Table',
-            href: '/product-category/furniture/coffee-table'
+            href: '/furniture/living-room/coffee-table'
           },
           {
             name: 'Bench',
-            href: '/product-category/furniture/bench'
+            href: '/furniture/living-room/bench'
           },
           {
             name: 'Ottoman & Pouf',
-            href: '/product-category/furniture/ottoman-pouf'
+            href: '/furniture/living-room/ottoman-pouf'
           },
           {
             name: 'Decorative Stool',
-            href: '/product-category/home-decor/decorative-stools'
+            href: '/furniture/living-room/decorative-stools'
           },
           {
             name: 'Console Table',
-            href: '/product-category/furniture/console-tables'
+            href: '/furniture/living-room/console-tables'
           },
           {
             name: 'Chest Drawer',
-            href: '/product-category/chests'
+            href: '/furniture/living-room/chests'
           },
           {
             name: 'Sideboard & Buffet',
-            href: '/product-category/buffet'
+            href: '/furniture/living-room/buffet'
           },
           {
             name: 'TV Stand',
-            href: '/product-category/tv-stands'
+            href: '/furniture/living-room/tv-stands'
           },
           {
             name: 'Room Deviders',
-            href: '/product-category/room-deviders'
+            href: '/furniture/living-room/room-deviders'
           }
         ]
       },
@@ -74,31 +74,31 @@ export const navlinks = [
         sublinks: [
           {
             name: 'Beds',
-            href: '/product-category/bedsets'
+            href: '/furniture/bedroom/bedsets'
           },
           {
             name: 'Headboards',
-            href: '/product-category/furniture/headboards'
+            href: '/furniture/bedroom/headboards'
           },
           {
             name: 'Bed Side Table',
-            href: '/product-category/furniture/bed-side-nightstand'
+            href: '/furniture/bedroom/bed-side-nightstand'
           },
           {
             name: 'Make Up Table',
-            href: '/product-category/furniture/makeup-table'
+            href: '/furniture/bedroom/makeup-table'
           },
           {
             name: 'Chest Of Drawers and Dressers',
-            href: '/product-category/furniture/chest-of-drawers-and-dressers'
+            href: '/furniture/bedroom/chest-of-drawers-and-dressers'
           },
           {
             name: 'TV Cabinets',
-            href: '/product-category/tv-cabinets'
+            href: '/furniture/bedroom/tv-cabinets'
           },
           {
             name: 'Bed Benches',
-            href: '/product-category/bed-benches'
+            href: '/furniture/bedroom/bed-benches'
           }
         ]
       },

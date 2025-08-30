@@ -50,7 +50,7 @@ export default async function BedSetsPage() {
 
   if (categoryId) {
     const data = await fetchJson(
-      `/products?category=${categoryId}&per_page=100&page=1&orderby=date&order=desc`
+      `/products?category=${categoryId}&per_page=100`
     );
     products = Array.isArray(data) ? data : [];
   }

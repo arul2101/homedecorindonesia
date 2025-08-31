@@ -1,8 +1,10 @@
-import { Search, ShoppingCart, User } from "lucide-react";
 import Image from "next/image";
 import Logo from "@/public/img/Logo.png";
 import Link from "next/link";
 import NavLinksMobile from "./NavLinksMobile";
+import LoginDropdown from "./LoginDropdown";
+import ShoppingCart from "./ShoppingCart";
+import SearchInput from "./SearchInput";
 
 export default function MainHeader() {
   return (
@@ -20,18 +22,9 @@ export default function MainHeader() {
         </Link>
 
         <div className="flex items-center sm:space-x-6 space-x-2">
-          <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors sm:block hidden">
-            <User className="w-6 h-6" />
-          </button>
-          <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors relative">
-            <ShoppingCart className="w-6 h-6" />
-            <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              0
-            </span>
-          </button>
-          <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors">
-            <Search className="w-6 h-6" />
-          </button>
+          <LoginDropdown />
+          <ShoppingCart />
+          <SearchInput />
         </div>
       </div>
     </div>

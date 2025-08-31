@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <>
-      <Carousel />
+      <Carousel isActiveButton={false} />
       <ShopByCategory />
       <ShopByRoom />
       <ShopByFabrics />

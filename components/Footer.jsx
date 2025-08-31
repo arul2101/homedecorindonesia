@@ -118,7 +118,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="w-full bg-gray-800 text-white py-3 px-4 rounded-md hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#39483f] text-white py-3 px-4 rounded-md hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2"
               >
                 Subscribe
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +156,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className="text-center">
-              <p className="text-gray-600">© 2023 Home Decor. All Rights Reserved</p>
+              <p className="text-gray-600">© 2025 Home Decor. All Rights Reserved</p>
             </div>
 
             {/* Privacy & Cookie */}

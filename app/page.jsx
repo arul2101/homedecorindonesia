@@ -5,6 +5,8 @@ import ShopByFabrics from '@/components/Homepage/ShopByFabrics';
 import ShopByCategory from '@/components/Homepage/ShopByCategory';
 import Services from '@/components/Homepage/Services';
 import AccordionLuxurious from '@/components/Homepage/AccordionLuxurious';
+import Reviews from '@/components/Homepage/Reviews';
+import Showrooms from '@/components/Homepage/Showrooms';
 
 export default async function Home() {
 	// const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/products`, { next: { revalidate: 60 } });
@@ -19,6 +21,8 @@ export default async function Home() {
       <ShopByFabrics />
       <Services />
       <AccordionLuxurious />
+      <Reviews />
+      <Showrooms />
       {/* <ProductsGrid products={products} /> */}
     </>
   );

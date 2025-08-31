@@ -107,7 +107,7 @@ export default function AccordionLuxurious(){
   };
 
   return (
-    <div className="max-w-[95rem] mx-auto px-8 py-14 bg-white">
+    <div className="max-w-[95rem] mx-auto px-8 mt-8 bg-white">
       {/* Header */}
       <div className="mb-12">
         <motion.h1 

@@ -15,7 +15,7 @@ export default function WhatsAppFloating(){
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center">
+    <div className="fixed bottom-20 right-6 z-50 flex items-center">
       <div className={`
         mr-3 bg-green-500 text-white px-6 py-1 rounded-full 
         transition-all duration-300 ease-in-out font-normal text-sm

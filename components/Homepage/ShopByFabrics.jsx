@@ -106,7 +106,7 @@ export default function ShopByFabrics() {
             </div>
           </motion.div>
 
-          <div className="md:space-y-4">
+          <div className="md:space-y-4 space-y-2">
             {/* 2 card in side */}
             <motion.div
               className=''

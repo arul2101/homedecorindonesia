@@ -40,7 +40,7 @@ async function getBedsCategoryId() {
 
 
 export const metadata = {
-  title: 'Bed Becnhes',
+  title: 'Bed Benches',
 };
 
 export default async function BedSetsPage() {

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Eye, Handbag, RefreshCw } from "lucide-react";
+
 
 export default function ProductsGrid({ products = [] }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,6 +15,8 @@ export default function ProductsGrid({ products = [] }) {
   const totalPages = Math.ceil(products.length / perPage);
   const startIndex = (currentPage - 1) * perPage;
   const currentProducts = products.slice(startIndex, startIndex + perPage);
+
+  console.log(products)
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -63,43 +68,81 @@ export default function ProductsGrid({ products = [] }) {
   );
 }
 
+function HoverButton({ children, label }) {
+  const [hoveredButton, setHoveredButton] = useState(null);
+  return (
+    <motion.button 
+      className={`flex items-center gap-2 rounded-full p-2 shadow-md overflow-hidden transition-colors duration-300 ${
+        hoveredButton === label ? "bg-black text-white" : "bg-white text-black"
+      }`}
+      onMouseEnter={() => setHoveredButton(label)}
+      onMouseLeave={() => setHoveredButton(null)}
+    >
+      {hoveredButton === label && (
+        <motion.span
+          initial={{ width: 0, opacity: 0, x: -20 }}
+          animate={{ width: "auto", opacity: 1, x: 0 }}
+          exit={{ width: 0, opacity: 0, x: -20 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          className="whitespace-nowrap text-sm"
+        >
+          {label}
+        </motion.span>
+      )}
+      {children}
+    </motion.button>
+  )
+}
+
 function ProductCard({ product }) {
   const [hover, setHover] = useState(false);
   const mainImg = product.images?.[0]?.src;
   const secondImg = product.images?.[1]?.src || mainImg;
 
   return (
-    <div
+    <motion.div
       className="p-4 cursor-pointer"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       {/* Gambar produk */}
       <div className="relative w-full h-72 bg-white flex items-center justify-center overflow-hidden">
-        {mainImg && (
-          <Image
-            src={hover ? secondImg : mainImg}
-            alt={product.name}
-            width={600}
-            height={600}
-            className="object-contain w-full h-full transition-all duration-300"
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {mainImg && (
+            <motion.div
+              key={hover ? product.images?.[1]?.id : product.images?.[0]?.id}
+              initial={{ opacity: .5 }}
+              animate={{ scale: hover ? 1.05 : 1, opacity: 1 }}
+              exit={{ opacity: .5 }}
+              transition={{ duration: .3, ease: "easeOut" }}
+            >
+              <Image
+                src={hover ? secondImg : mainImg}
+                alt={product.name}
+                width={600}
+                height={600}
+                className="object-contain w-full h-full transition-all duration-300"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Tombol hover kanan */}
-        {hover && (
-          <div className="absolute top-1/4 right-2 flex flex-col gap-2 z-10">
-            <button className="bg-white rounded-full p-2 shadow hover:bg-gray-100">
-              🔄
-            </button>
-            <button className="bg-white rounded-full p-2 shadow hover:bg-gray-100">
-              👁️
-            </button>
-            <button className="bg-white rounded-full p-2 shadow hover:bg-gray-100">
-              🛒
-            </button>
-          </div>
-        )}
+        <AnimatePresence>
+          {/* Tombol hover kanan */}
+          {hover && (
+            <motion.div
+              className="absolute top-1/4 right-2 flex flex-col items-end gap-2 z-10"
+              initial={{ x: 60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 60, opacity: 0 }}
+              transition={{ duration: .3, ease: "easeOut" }}
+            >
+              <HoverButton label="Compare"><RefreshCw size={18} /></HoverButton>
+              <HoverButton label="Quick view"><Eye size={19} /></HoverButton>
+              <HoverButton label="Add to cart"><Handbag size={18} /></HoverButton>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Info produk */}
@@ -126,6 +169,6 @@ function ProductCard({ product }) {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

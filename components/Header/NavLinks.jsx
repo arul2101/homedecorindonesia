@@ -1,7 +1,7 @@
 'use client'
 
 import { navlinks } from "@/constant"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react";
 import { motion as m, AnimatePresence } from "framer-motion";
@@ -130,14 +130,19 @@ export default function NavLinks() {
                             setIsHovered(null)
                           }}
                         >
-                          <Link href={category.href} className="text-sm rounded transition-colors duration-150 relative">
-                            {category.name}
-                            <m.span
-                              className="absolute bottom-0 left-0 h-[1px] bg-gray-800 origin-left w-[100%]"
-                              initial={{ scaleX: 0 }}
-                              animate={{ scaleX: isHovered === category.name ? 1 : 0 }}
-                              transition={{ duration: .2, ease: "easeOut" }}
-                            />
+                          <Link href={category.href} className={`${category.hasDropdown && 'flex justify-between items-center'} text-sm rounded transition-colors duration-150 relative`}>
+                            <span className="relative">
+                              {category.name}
+
+                              <m.span
+                                className="absolute bottom-0 left-0 h-[1px] bg-gray-800 origin-left w-[100%]"
+                                initial={{ scaleX: 0 }}
+                                animate={{ scaleX: isHovered === category.name ? 1 : 0 }}
+                                transition={{ duration: .2, ease: "easeOut" }}
+                              />
+                            </span>
+
+                            {category.hasDropdown && <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${isHovered === category.name ? 'rotate-90' : ''}`} />}
                           </Link>
 
                           <AnimatePresence>

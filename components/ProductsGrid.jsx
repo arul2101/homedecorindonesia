@@ -16,8 +16,6 @@ export default function ProductsGrid({ products = [] }) {
   const startIndex = (currentPage - 1) * perPage;
   const currentProducts = products.slice(startIndex, startIndex + perPage);
 
-  console.log(products)
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Grid produk */}

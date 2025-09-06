@@ -1,27 +1,5 @@
-import dynamic from "next/dynamic";
-
-const ProductsGrid = dynamic(() => import("@/components/ProductsGrid"), { ssr: false });
-
-async function fetchJson(path) {
-  const base = process.env.NEXT_PUBLIC_WC_STORE_URL; // gunakan domain WooCommerce langsung
-  const key = process.env.WC_READ_KEY;
-  const secret = process.env.WC_READ_SECRET;
-
-  // Basic Auth
-  const auth = Buffer.from(`${key}:${secret}`).toString('base64');
-
-  const res = await fetch(`${base}/wp-json/wc/v3${path}`, {
-    headers: {
-      Authorization: `Basic ${auth}`,
-    },
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${path}: ${res.status}`);
-  }
-  return res.json();
-}
+import { fetchJson } from "@/lib/utils";
+import ProductsPage from "@/components/ProductsPage";
 
 
 async function getBedsCategoryId() {
@@ -43,7 +21,7 @@ export const metadata = {
   title: 'Chest of Drawers and Dressers',
 };
 
-export default async function BedSetsPage() {
+export default async function ChestOfDrawersPage() {
   const categoryId = await getBedsCategoryId();
   let products = [];
 
@@ -54,20 +32,6 @@ export default async function BedSetsPage() {
     products = Array.isArray(data) ? data : [];
   }
 
-  return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-4">Chest of Drawers and Dressers</h1>
-
-      {!categoryId ? (
-        <p className="text-sm text-gray-500">
-          Kategori <q>Bedsets</q> tidak ditemukan.
-        </p>
-      ) : products.length === 0 ? (
-        <p className="text-sm text-gray-500">Produk tidak tersedia.</p>
-      ) : (
-        <ProductsGrid products={products} />
-      )}
-    </main>
-  );
+  return <ProductsPage categoryId={categoryId} products={products} category="Chest of Drawers and Dressers" />
 }
 

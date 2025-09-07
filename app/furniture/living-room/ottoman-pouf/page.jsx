@@ -1,35 +1,12 @@
 import ProductsPage from "@/components/ProductsPage";
-import { fetchJson } from "@/lib/utils";
-
-async function getBedsCategoryId() {
-  let cats = await fetchJson(`/products/categories?slug=ottoman-pouf&per_page=1`);
-  if (Array.isArray(cats) && cats[0]?.id) return cats[0].id;
-
-  cats = await fetchJson(`/products/categories?per_page=100`);
-  if (!Array.isArray(cats)) return null;
-
-  let match = cats.find((c) => (c?.slug || '').toLowerCase() === 'ottoman-pouf');
-  if (match) return match.id;
-  match = cats.find((c) => (c?.name || '').toLowerCase().includes('ottoman-pouf'));
-  if (match) return match.id;
-  return match ? match.id : null;
-}
-
+import { getProducts } from "@/services/api";
 
 export const metadata = {
   title: 'Ottoman Pouf',
 };
 
 export default async function OttomanPoufPage() {
-  const categoryId = await getBedsCategoryId();
-  let products = [];
-
-  if (categoryId) {
-    const data = await fetchJson(
-      `/products?category=${categoryId}&per_page=100`
-    );
-    products = Array.isArray(data) ? data : [];
-  }
+  const { products, categoryId } = await getProducts('ottoman-pouf', ['ottoman-pouf'], 100);
 
   return <ProductsPage categoryId={categoryId} products={products} category="Ottoman Pouf" />
 }

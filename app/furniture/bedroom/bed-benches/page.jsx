@@ -1,35 +1,12 @@
-import { fetchJson } from "@/lib/utils";
 import ProductsPage from "@/components/ProductsPage";
-
-async function getBedsCategoryId() {
-  let cats = await fetchJson(`/products/categories?slug=bed-benches&per_page=1`);
-  if (Array.isArray(cats) && cats[0]?.id) return cats[0].id;
-
-  cats = await fetchJson(`/products/categories?per_page=100`);
-  if (!Array.isArray(cats)) return null;
-
-  let match = cats.find((c) => (c?.slug || '').toLowerCase() === 'bed-benches');
-  if (match) return match.id;
-  match = cats.find((c) => (c?.name || '').toLowerCase().includes('bed-benches'));
-  if (match) return match.id;
-  return match ? match.id : null;
-}
-
+import { getProducts } from "@/services/api";
 
 export const metadata = {
   title: 'Bed Benches',
 };
 
 export default async function BedBenchesPage() {
-  const categoryId = await getBedsCategoryId();
-  let products = [];
-
-  if (categoryId) {
-    const data = await fetchJson(
-      `/products?category=${categoryId}&per_page=100&page=1&orderby=date&order=desc&stock_status=instock&status=publish`
-    );
-    products = Array.isArray(data) ? data : [];
-  }
+  const { products, categoryId } = await getProducts('bed-benches', ['bed-benches'], 100);
 
   return <ProductsPage categoryId={categoryId} products={products} category="Bed Benches" />
 }

@@ -130,7 +130,7 @@ export default function NavLinks() {
                             setIsHovered(null)
                           }}
                         >
-                          <Link href={category.href} className={`${category.hasDropdown && 'flex justify-between items-center'} text-sm rounded transition-colors duration-150 relative`}>
+                          <Link href={category.href} className={`${category.hasDropdown && 'flex justify-between items-center'} text-sm rounded transition-colors duration-150`}>
                             <span className="relative">
                               {category.name}
 

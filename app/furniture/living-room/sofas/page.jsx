@@ -1,19 +1,5 @@
 import ProductsPage from "@/components/ProductsPage";
-import { fetchJson } from "@/lib/utils";
-
-async function getBedsCategoryId() {
-  let cats = await fetchJson(`/products/categories?slug=sofas&per_page=1`);
-  if (Array.isArray(cats) && cats[0]?.id) return cats[0].id;
-
-  cats = await fetchJson(`/products/categories?per_page=100`);
-  if (!Array.isArray(cats)) return null;
-
-  let match = cats.find((c) => (c?.slug || '').toLowerCase() === 'sofas');
-  if (match) return match.id;
-  match = cats.find((c) => (c?.name || '').toLowerCase().includes('sofas'));
-  if (match) return match.id;
-  return match ? match.id : null;
-}
+import { getProducts } from "@/services/api";
 
 
 export const metadata = {
@@ -21,15 +7,7 @@ export const metadata = {
 };
 
 export default async function SofaPage() {
-  const categoryId = await getBedsCategoryId();
-  let products = [];
-
-  if (categoryId) {
-    const data = await fetchJson(
-      `/products?category=${categoryId}&per_page=100`
-    );
-    products = Array.isArray(data) ? data : [];
-  }
+  const { products, categoryId } = await getProducts('sofas', ['sofas'], 100);
 
   return <ProductsPage categoryId={categoryId} products={products} category="Sofa" />
 }

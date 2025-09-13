@@ -286,7 +286,7 @@ export const navlinks = [
   { name: 'Flooring', hasDropdown: false, href: 'Flooring' },
   { name: 'Catalogues', hasDropdown: false, href: '/catalogues' },
   { name: 'Photo Gallery', hasDropdown: false, href: '/all-galery' },
-  { name: 'Blog', hasDropdown: false, href: '/our-2025-curated-collection-of-living-room-sets' },
+  { name: 'Blog', hasDropdown: false, href: '/blogs' },
   {
     name: 'SALE',
     hasDropdown: true,

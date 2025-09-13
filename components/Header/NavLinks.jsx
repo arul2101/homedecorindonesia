@@ -1,16 +1,77 @@
 'use client'
 
-import { navlinks } from "@/constant"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion as m, AnimatePresence } from "framer-motion";
+import { navlinks } from "@/constant";
 
 export default function NavLinks() {
+  const [menuItems, setMenuItems] = useState(navlinks); // Start with static navlinks as fallback
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoveredCategory, setHoveredCategory] = useState(null);
-  const [isHovered, setIsHovered] = useState(null); // use this to border bottom effect hovered
+  const [isHovered, setIsHovered] = useState(null);
   const [hoveredSubCategory, setHoveredSubCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMenu() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/menu`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch menu');
+        const data = await res.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        // Transform WordPress menu data to match our format
+        const transformedMenu = transformWordPressMenu(data);
+        if (transformedMenu && transformedMenu.length > 0) {
+          setMenuItems(transformedMenu);
+        }
+      } catch (error) {
+        console.error('Error loading menu:', error);
+        // Keep using static navlinks on error
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMenu();
+  }, []);
+
+  // Function to transform WordPress menu data to our format
+  function transformWordPressMenu(wpMenu) {
+    // Check if wpMenu is the menu object from the API
+    if (!wpMenu || !wpMenu.items) return navlinks;
+    
+    // Transform the menu items
+    function transformMenuItem(item) {
+      return {
+        name: item.title,
+        href: item.url.replace('https://homedecorindonesia.com', ''),
+        hasDropdown: item.child_items?.length > 0,
+        sublinks: item.child_items?.map(child => ({
+          name: child.title,
+          href: child.url.replace('https://homedecorindonesia.com', ''),
+          hasDropdown: child.child_items?.length > 0,
+          sublinks: child.child_items?.map(grandChild => ({
+            name: grandChild.title,
+            href: grandChild.url.replace('https://homedecorindonesia.com', '')
+          }))
+        }))
+      };
+    }
+    
+    return wpMenu.items.map(transformMenuItem);
+  }
 
   const dropdownVariants = {
     hidden: {
@@ -73,7 +134,7 @@ export default function NavLinks() {
   return (
     <div className="border-t border-gray-200 border-b py-2 sm:block hidden">
       <div className="px-4">
-        <nav className="flex items-center gap-4 flex-wrap font-normal">
+        <nav className="flex items-center gap-4 flex-wrap font-light">
           {navlinks.map(item => (
             <div
               key={item.name}

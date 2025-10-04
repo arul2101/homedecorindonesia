@@ -109,19 +109,19 @@ export const navlinks = [
         sublinks: [
           {
             name: 'Dining Table',
-            href: '/product-category/furniture/dining-tables'
+            href: '/furniture/dining-room/dining-tables'
           },
           {
             name: 'Dining Chairs',
-            href: '/product-category/furniture/dining-chairs'
+            href: '/furniture/dining-room/dining-chairs'
           },
           {
             name: 'Bar Chair',
-            href: '/product-category/furniture/bar-chairs'
+            href: '/furniture/dining-room/bar-chairs'
           },
           {
             name: 'Trolleys & Bar Carts',
-            href: '/product-category/trolleys-bar-carts'
+            href: '/furniture/dining-room/trolleys-bar-carts'
           }
         ]
       },

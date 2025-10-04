@@ -178,7 +178,7 @@ export default function NavLinks() {
                       {item.sublinks.map((category) => (
                         <div
                           key={category.name}
-                          className="relative"
+                          className="relative mb-3 last:mb-0"
                           onMouseEnter={() => {
                             if (category.hasDropdown) {
                               setHoveredCategory(category.name)
@@ -191,7 +191,7 @@ export default function NavLinks() {
                             setIsHovered(null)
                           }}
                         >
-                          <Link href={category.href} className={`${category.hasDropdown && 'flex justify-between items-center'} text-sm rounded transition-colors duration-150`}>
+                          <Link href={category.href} className={`${category.hasDropdown && 'flex justify-between items-center'} text-sm rounded transition-colors duration-150 py-2 px-3 block`}>
                             <span className="relative">
                               {category.name}
 
@@ -216,7 +216,7 @@ export default function NavLinks() {
                                 className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl z-60 min-w-56"
                               >
                                 <div className="p-3">
-                                  <ul className="space-y-1">
+                                  <ul className="space-y-3">
                                     {category.sublinks.map((subItem, subIndex) => (
                                       <m.li
                                         key={subItem.name}
@@ -225,7 +225,7 @@ export default function NavLinks() {
                                         initial="hidden"
                                         animate="visible"
                                       >
-                                        <Link href={subItem.href} className="mb-2 text-sm rounded transition-colors duration-150 relative" onMouseEnter={() => setHoveredSubCategory(subItem.name)}
+                                        <Link href={subItem.href} className="block text-sm rounded transition-colors duration-150 relative py-2 px-3" onMouseEnter={() => setHoveredSubCategory(subItem.name)}
                                         onMouseLeave={() => setHoveredSubCategory(null)}>
                                           {subItem.name}
                                         

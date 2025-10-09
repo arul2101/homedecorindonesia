@@ -18,7 +18,7 @@ import {
   Check,
   Package
 } from "lucide-react";
-import ProductsGrid from "@/components/ProductsGrid";
+import ProductSlider from "./ProductSlider";
 
 export default function SingleProduct({ product, relatedProducts = [], isLoading = false }) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -73,15 +73,20 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
 
   // Format product data from WooCommerce API
   const formatProductData = (wooProduct) => {
-    // Debug: Log the raw product data to check price fields
+    // Debug: Log the raw product data to check all fields
     console.log('Raw product data:', {
       id: wooProduct.id,
       name: wooProduct.name,
+      description: wooProduct.description?.substring(0, 100),
+      short_description: wooProduct.short_description?.substring(0, 100),
       price: wooProduct.price,
       sale_price: wooProduct.sale_price,
       regular_price: wooProduct.regular_price,
       on_sale: wooProduct.on_sale,
-      prices: wooProduct.prices
+      prices: wooProduct.prices,
+      stock_status: wooProduct.stock_status,
+      stock_quantity: wooProduct.stock_quantity,
+      manage_stock: wooProduct.manage_stock
     });
 
     // Handle different price field structures from different WooCommerce API versions
@@ -101,10 +106,67 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
       regularPrice = parseFloat(wooProduct.regular_price) || price;
     }
 
+    // Handle stock status properly
+    let stock = 0;
+    console.log('Stock fields:', {
+      stock_status: wooProduct.stock_status,
+      manage_stock: wooProduct.manage_stock,
+      stock_quantity: wooProduct.stock_quantity,
+      // Check for different API field names
+      stockStatus: wooProduct.stockStatus,
+      manageStock: wooProduct.manageStock,
+      stockQty: wooProduct.stock_quantity || wooProduct.stockQty
+    });
+
+    // Try multiple field naming conventions from different WooCommerce API versions
+    const stockStatus = wooProduct.stock_status || wooProduct.stockStatus;
+    const manageStock = wooProduct.manage_stock || wooProduct.manageStock;
+    const stockQuantity = wooProduct.stock_quantity || wooProduct.stockQty;
+
+    if (stockStatus === 'instock') {
+      if (manageStock === true && stockQuantity && stockQuantity > 0) {
+        stock = parseInt(stockQuantity);
+      } else if (manageStock === false) {
+        // When stock management is disabled but item is in stock
+        stock = 999; // Large number to indicate "in stock" but no specific quantity
+      } else if (stockQuantity && stockQuantity > 0) {
+        // Fallback to stock quantity if it exists
+        stock = parseInt(stockQuantity);
+      } else {
+        // Default to in stock with high quantity
+        stock = 999;
+      }
+    } else {
+      stock = 0; // Out of stock
+    }
+
+    // Clean and format description
+    const cleanDescription = (text) => {
+      if (!text) return "Premium quality product with excellent craftsmanship and design.";
+
+      // Remove HTML tags
+      let cleanText = text.replace(/<[^>]*>/g, '');
+
+      // Decode HTML entities
+      cleanText = cleanText
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'");
+
+      // Clean up whitespace
+      cleanText = cleanText.replace(/\s+/g, ' ').trim();
+
+      return cleanText;
+    };
+
     return {
       id: wooProduct.id,
       name: wooProduct.name,
-      description: wooProduct.description || wooProduct.short_description || "Premium quality product with excellent craftsmanship and design.",
+      description: cleanDescription(wooProduct.description),
       price: price,
       salePrice: salePrice,
       regularPrice: regularPrice,
@@ -115,7 +177,7 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
       })) || [],
       sku: wooProduct.sku || "N/A",
       category: wooProduct.categories?.[0]?.name || "General",
-      stock: wooProduct.stock_status === "instock" ? wooProduct.stock_quantity || 10 : 0,
+      stock: stock,
       rating: wooProduct.average_rating ? parseFloat(wooProduct.average_rating) : 4.5,
       reviews: wooProduct.review_count || 0,
       brand: wooProduct.attributes?.find(attr => attr.name === "Brand")?.options?.[0] || "HomeDecor Indonesia",
@@ -135,13 +197,29 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
 
 const productData = formatProductData(product);
 
+  // Format related products data
+  const formattedRelatedProducts = relatedProducts.map(relatedProduct => {
+    const formatted = formatProductData(relatedProduct);
+    console.log('Formatted related product:', {
+      id: formatted.id,
+      name: formatted.name,
+      price: formatted.price,
+      salePrice: formatted.salePrice
+    });
+    return formatted;
+  });
+
   // Debug: Log formatted product data
   console.log('Formatted product data:', {
     id: productData.id,
     name: productData.name,
     price: productData.price,
     salePrice: productData.salePrice,
-    regularPrice: productData.regularPrice
+    regularPrice: productData.regularPrice,
+    stock: productData.stock,
+    description: productData.description?.substring(0, 100),
+    // Also show stock display logic
+    stockDisplay: productData.stock === 999 ? "In stock (no limit)" : productData.stock > 0 ? `${productData.stock} units` : "Out of stock"
   });
 
   const handleQuantityChange = (change) => {
@@ -590,11 +668,18 @@ const productData = formatProductData(product);
       </section>
 
       {/* Related Products */}
-      {relatedProducts && relatedProducts.length > 0 && (
-        <section className="container mx-auto px-4 py-12">
-          <h2 className="text-2xl font-light tracking-wider mb-8 text-center">You Might Also Like</h2>
-          <ProductsGrid products={relatedProducts} />
-        </section>
+      {formattedRelatedProducts && formattedRelatedProducts.length > 0 && (
+        <ProductSlider
+          products={formattedRelatedProducts}
+          title="You Might Also Like"
+          subtitle="Discover similar products that complement your selection"
+          autoplay={true}
+          autoplayInterval={4000}
+          showArrows={true}
+          showDots={true}
+          slidesToShow={4}
+          className="bg-gray-50"
+        />
       )}
     </div>
   );

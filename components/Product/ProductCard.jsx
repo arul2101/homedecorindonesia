@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCompare } from "@/hooks/useCompare";
 import {
   RefreshCw,
   Eye,
@@ -12,7 +13,7 @@ import {
   Share2
 } from "lucide-react";
 
-function HoverButton({ children, label, onClick, isActive, size = "default" }) {
+function HoverButton({ children, label, onClick, isActive, size = "default", disabled = false }) {
   const [hoveredButton, setHoveredButton] = useState(null);
 
   const sizeClasses = {
@@ -25,27 +26,48 @@ function HoverButton({ children, label, onClick, isActive, size = "default" }) {
     small: 16
   };
 
+  const getButtonStyles = () => {
+    const baseClasses = `flex items-center gap-2 rounded-full ${sizeClasses[size]} shadow-md overflow-hidden transition-all duration-300`;
+
+    if (disabled) {
+      return `${baseClasses} bg-gray-200 text-gray-400 cursor-not-allowed`;
+    }
+
+    if (isActive) {
+      return `${baseClasses} bg-blue-500 text-white`;
+    }
+
+    if (hoveredButton === label) {
+      return `${baseClasses} bg-black text-white transform scale-105`;
+    }
+
+    return `${baseClasses} bg-white text-black hover:transform hover:scale-105`;
+  };
+
   return (
     <motion.button
-      onClick={onClick}
-      className={`flex items-center gap-2 rounded-full ${sizeClasses[size]} shadow-md overflow-hidden transition-colors duration-300 ${
-        isActive ? "bg-black text-white" : hoveredButton === label ? "bg-black text-white" : "bg-white text-black"
-      }`}
-      onMouseEnter={() => setHoveredButton(label)}
+      onClick={disabled ? undefined : onClick}
+      className={getButtonStyles()}
+      onMouseEnter={() => !disabled && setHoveredButton(label)}
       onMouseLeave={() => setHoveredButton(null)}
       aria-label={label}
+      disabled={disabled}
+      whileHover={!disabled ? { scale: 1.05 } : {}}
+      whileTap={!disabled ? { scale: 0.95 } : {}}
     >
-      {hoveredButton === label && (
-        <motion.span
-          initial={{ width: 0, opacity: 0, x: -20 }}
-          animate={{ width: "auto", opacity: 1, x: 0 }}
-          exit={{ width: 0, opacity: 0, x: -20 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
-          className="whitespace-nowrap text-sm"
-        >
-          {label}
-        </motion.span>
-      )}
+      <AnimatePresence>
+        {hoveredButton === label && (
+          <motion.span
+            initial={{ width: 0, opacity: 0, x: -20 }}
+            animate={{ width: "auto", opacity: 1, x: 0 }}
+            exit={{ width: 0, opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="whitespace-nowrap text-sm"
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
       {children}
     </motion.button>
   );
@@ -54,12 +76,11 @@ function HoverButton({ children, label, onClick, isActive, size = "default" }) {
 export default function ProductCard({
   product,
   viewMode = "grid",
-  onAddToCompare,
   onQuickView,
   onAddToCart,
   onAddToWishlist,
   onShare,
-  isInCompare = false,
+  onProductClick,
   isWishlisted = false,
   showActions = true,
   showWishlist = false,
@@ -68,6 +89,10 @@ export default function ProductCard({
 }) {
   const [hover, setHover] = useState(false);
   const [localWishlist, setLocalWishlist] = useState(isWishlisted);
+
+  // Use global compare state
+  const { isInCompare, toggleCompare, isCompareFull } = useCompare();
+  const isCurrentlyCompared = product ? isInCompare(product.id) : false;
 
   // Handle product images
   const mainImg = product.images?.[0]?.src;
@@ -79,9 +104,60 @@ export default function ProductCard({
     return price ? `Rp ${Number(price).toLocaleString("id-ID")}` : "Rp 0";
   };
 
+  // Calculate discount percentage
+  const calculateDiscountPercentage = (salePrice, regularPrice) => {
+    if (!salePrice || !regularPrice || salePrice >= regularPrice) return 0;
+    return Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+  };
+
+  // Get price values - handle both price/salePrice and regularPrice/salePrice structures
+  const getPrices = () => {
+    // Debug: log the product price data
+    console.log('Product price data for:', product.name, {
+      price: product.price,
+      regularPrice: product.regularPrice,
+      salePrice: product.salePrice
+    });
+
+    const regularPrice = product.regularPrice || product.price;
+    const salePrice = product.salePrice;
+    const hasDiscount = salePrice && Number(salePrice) < Number(regularPrice);
+
+    console.log('Calculated prices:', {
+      regularPrice,
+      salePrice,
+      hasDiscount
+    });
+
+    return {
+      regularPrice,
+      salePrice,
+      hasDiscount
+    };
+  };
+
   // Handle button actions
+  const handleProductClick = (e) => {
+    // Prevent navigation when clicking on action buttons
+    if (e.target.closest('button')) {
+      return;
+    }
+
+    if (product?.slug) {
+      onProductClick?.(product);
+    }
+  };
+
   const handleCompare = () => {
-    onAddToCompare?.(product);
+    if (!product) return;
+
+    try {
+      toggleCompare(product);
+    } catch (error) {
+      if (error.message.includes('Maximum')) {
+        alert('Maximum 4 products can be compared. Please remove a product first.');
+      }
+    }
   };
 
   const handleQuickView = () => {
@@ -117,6 +193,7 @@ export default function ProductCard({
         className={`bg-white border rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 ${className}`}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        onClick={handleProductClick}
       >
         <div className="flex flex-col md:flex-row gap-6">
           {/* Image */}
@@ -152,9 +229,9 @@ export default function ProductCard({
                   transition={{ duration: .3, ease: "easeOut" }}
                 >
                   <HoverButton
-                    label="Compare"
+                    label={isCurrentlyCompared ? "Remove" : "Compare"}
                     onClick={handleCompare}
-                    isActive={isInCompare}
+                    isActive={isCurrentlyCompared}
                     size="small"
                   >
                     <RefreshCw size={14} />
@@ -200,20 +277,38 @@ export default function ProductCard({
             {/* Price and actions */}
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-2 items-center text-lg">
-                {product.salePrice && product.salePrice < product.regularPrice ? (
-                  <>
-                    <span className="line-through text-gray-400">
-                      {formatPrice(product.regularPrice)}
-                    </span>
-                    <span className="text-black font-medium">
-                      {formatPrice(product.salePrice)}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-black font-medium">
-                    {formatPrice(product.price)}
-                  </span>
-                )}
+                {(() => {
+                  const { regularPrice, salePrice, hasDiscount } = getPrices();
+                  console.log('List view rendering:', { regularPrice, salePrice, hasDiscount });
+
+                  if (hasDiscount) {
+                    const discountPercent = calculateDiscountPercentage(salePrice, regularPrice);
+                    console.log('Rendering discount in list:', discountPercent);
+
+                    return (
+                      <>
+                        <span className="line-through text-gray-400">
+                          {formatPrice(regularPrice)}
+                        </span>
+                        <span className="text-black font-medium">
+                          {formatPrice(salePrice)}
+                        </span>
+                        {discountPercent > 0 && (
+                          <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                            -{discountPercent}%
+                          </span>
+                        )}
+                      </>
+                    );
+                  } else {
+                    console.log('Rendering regular price in list:', regularPrice);
+                    return (
+                      <span className="text-black font-medium">
+                        {formatPrice(regularPrice)}
+                      </span>
+                    );
+                  }
+                })()}
               </div>
 
               <div className="flex gap-2">
@@ -261,6 +356,7 @@ export default function ProductCard({
       className={`p-4 cursor-pointer ${className}`}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onClick={handleProductClick}
     >
       {/* Product Image */}
       <div className="relative w-full h-72 bg-white flex items-center justify-center overflow-hidden">
@@ -284,7 +380,7 @@ export default function ProductCard({
           )}
         </AnimatePresence>
 
-        {/* Hover Action Buttons */}
+                    {/* Enhanced Hover Action Buttons */}
         {showActions && hover && (
           <AnimatePresence>
             <motion.div
@@ -295,26 +391,45 @@ export default function ProductCard({
               transition={{ duration: .3, ease: "easeOut" }}
             >
               <HoverButton
-                label="Compare"
+                label={isCurrentlyCompared ? "Remove" : "Compare"}
                 onClick={handleCompare}
-                isActive={isInCompare}
+                isActive={isCurrentlyCompared}
+                disabled={!product}
               >
-                <RefreshCw size={18} />
+                <RefreshCw
+                  size={18}
+                  className={isCurrentlyCompared ? 'text-white' : ''}
+                />
               </HoverButton>
               <HoverButton
                 label="Quick view"
                 onClick={handleQuickView}
+                disabled={!product}
               >
                 <Eye size={19} />
               </HoverButton>
               <HoverButton
                 label="Add to cart"
                 onClick={handleAddToCart}
+                disabled={product.stock_status === 'outofstock' || !product}
               >
                 <Handbag size={18} />
               </HoverButton>
             </motion.div>
           </AnimatePresence>
+        )}
+
+        {/* Compare Badge - Always visible when product is in compare */}
+        {isCurrentlyCompared && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 z-20"
+          >
+            <RefreshCw size={12} />
+            Comparing
+          </motion.div>
         )}
 
         {/* Wishlist and Share buttons */}
@@ -359,20 +474,38 @@ export default function ProductCard({
 
         {/* Price */}
         <div className="flex flex-wrap gap-2 items-center text-base">
-          {product.salePrice && product.salePrice < product.regularPrice ? (
-            <>
-              <span className="line-through text-gray-400">
-                {formatPrice(product.regularPrice)}
-              </span>
-              <span className="text-black font-medium">
-                {formatPrice(product.salePrice)}
-              </span>
-            </>
-          ) : (
-            <span className="text-black font-medium">
-              {formatPrice(product.price)}
-            </span>
-          )}
+          {(() => {
+            const { regularPrice, salePrice, hasDiscount } = getPrices();
+            console.log('Grid view rendering:', { regularPrice, salePrice, hasDiscount });
+
+            if (hasDiscount) {
+              const discountPercent = calculateDiscountPercentage(salePrice, regularPrice);
+              console.log('Rendering discount:', discountPercent);
+
+              return (
+                <>
+                  <span className="line-through text-gray-400 text-sm">
+                    {formatPrice(regularPrice)}
+                  </span>
+                  <span className="text-black font-medium">
+                    {formatPrice(salePrice)}
+                  </span>
+                  {discountPercent > 0 && (
+                    <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-semibold">
+                      -{discountPercent}%
+                    </span>
+                  )}
+                </>
+              );
+            } else {
+              console.log('Rendering regular price:', regularPrice);
+              return (
+                <span className="text-black font-medium">
+                  {formatPrice(regularPrice)}
+                </span>
+              );
+            }
+          })()}
         </div>
       </div>
     </motion.div>

@@ -1,7 +1,9 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { useCart } from "@/hooks/useCart";
+import MiniCart from "../Cart/MiniCart";
 
 const CloseIcon = () => {
   return (
@@ -36,66 +38,61 @@ const SlidePanel = ({ isOpen, onClose, children }) => {
 };
 
 export default function ShoppingCart(){
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems] = useState([]);
+  const [showMiniCart, setShowMiniCart] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  const openCart = () => setIsCartOpen(true);
-  const closeCart = () => setIsCartOpen(false);
+  const { cartItems, getCartTotals } = useCart();
+  const totals = getCartTotals();
+  const totalItems = totals.totalItems;
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const openMiniCart = () => setShowMiniCart(true);
+  const closeMiniCart = () => setShowMiniCart(false);
 
   return (
-    <div className="">
-      <div className="">
-        <button
-          onClick={openCart}
-          className="p-2 text-black hover:text-gray-700 transition-colors relative"
-        >
-          <HiOutlineShoppingBag className="h-6 w-6" />
-          <span className="absolute top-1 right-0 bg-[#9aab88] text-black text-xs rounded-full w-4 h-4 flex items-center justify-center">
-            0
+    <div className="relative">
+      <button
+        onClick={openMiniCart}
+        className="p-2 text-black hover:text-gray-700 transition-colors relative group"
+      >
+        <HiOutlineShoppingBag className="h-6 w-6" />
+        {isClient && totalItems > 0 && (
+          <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+            {totalItems > 99 ? '99+' : totalItems}
           </span>
-        </button>
-      </div>
+        )}
+        <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          Shopping Cart ({isClient ? totalItems : 0} items)
+        </span>
+      </button>
 
-      <SlidePanel isOpen={isCartOpen} onClose={closeCart}>
-        <div className="h-full flex flex-col">
-          <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-normal text-gray-800 tracking-wider">
-              SHOPPING CART
-            </h2>
-            <button
-              onClick={closeCart}
-              className="flex items-center group"
-            >
-              <span className="text-sm">CLOSE</span>
-              <CloseIcon />
-            </button>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center p-8">
-            {cartItems.length === 0 ? (
-              <div className="text-center">
-                <p className="text-lg">No products in the cart.</p>
-              </div>
-            ) : (
-              <div className="w-full">
-                {cartItems.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border-b border-gray-200">
-                    {/* Isi Cart */}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {cartItems.length > 0 && (
-            <div className="p-6 border-t border-gray-200">
-              <button className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200">
-                Checkout
-              </button>
-            </div>
-          )}
-        </div>
-      </SlidePanel>
+      {/* Mini Cart Dropdown */}
+      <MiniCart
+        items={cartItems}
+        isOpen={showMiniCart}
+        onClose={closeMiniCart}
+        onUpdateQuantity={(itemId, newQuantity, attributes = {}) => {
+          // This will be handled by the CartManager
+          window.dispatchEvent(new CustomEvent('updateCartQuantity', {
+            detail: { itemId, quantity: newQuantity, attributes }
+          }));
+        }}
+        onRemoveItem={(itemId, attributes = {}) => {
+          // This will be handled by the CartManager
+          window.dispatchEvent(new CustomEvent('removeFromCart', {
+            detail: { itemId, attributes }
+          }));
+        }}
+        onCheckout={() => {
+          // Show full cart sidebar
+          closeMiniCart();
+          window.dispatchEvent(new CustomEvent('showCart'));
+        }}
+      />
     </div>
   );
 };

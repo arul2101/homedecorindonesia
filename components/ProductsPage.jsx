@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Grid, List, ChevronDown } from "lucide-react";
 
@@ -10,6 +11,7 @@ export default function ProductsPage({ products, category, categoryId }) {
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("popularity");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
 
   // Sort products based on selected option
   const sortedProducts = [...products].sort((a, b) => {
@@ -37,6 +39,13 @@ export default function ProductsPage({ products, category, categoryId }) {
     { value: "price-low-high", label: "Price: Low to High" },
     { value: "price-high-low", label: "Price: High to Low" }
   ];
+
+  // Handle product click for navigation
+  const handleProductClick = (product) => {
+    if (product?.slug) {
+      router.push(`/product/${product.slug}`);
+    }
+  };
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
@@ -115,7 +124,7 @@ export default function ProductsPage({ products, category, categoryId }) {
       ) : sortedProducts.length === 0 ? (
         <p className="text-sm text-gray-500">Produk tidak tersedia.</p>
       ) : (
-        <ProductsGrid products={sortedProducts} viewMode={viewMode} />
+        <ProductsGrid products={sortedProducts} viewMode={viewMode} onProductClick={handleProductClick} />
       )}
     </main>
   )

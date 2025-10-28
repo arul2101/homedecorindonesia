@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -24,6 +25,7 @@ import Showrooms from '@/components/Homepage/Showrooms'
 import ProductsGrid from '@/components/ProductsGrid'
 
 export default function WallpapersPage() {
+  const router = useRouter()
   const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -181,6 +183,13 @@ export default function WallpapersPage() {
       description: 'High-quality materials from renowned global manufacturers'
     }
   ]
+
+  // Handle product click for navigation
+  const handleProductClick = (product) => {
+    if (product?.slug) {
+      router.push(`/product/${product.slug}`);
+    }
+  };
 
   const sampleProducts = [
     {
@@ -407,7 +416,7 @@ export default function WallpapersPage() {
           </div>
 
           {/* Products Grid */}
-          <ProductsGrid products={sampleProducts} viewMode="grid" />
+          <ProductsGrid products={sampleProducts} viewMode="grid" onProductClick={handleProductClick} />
         </div>
       </section>
 

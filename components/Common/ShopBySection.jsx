@@ -7,21 +7,21 @@ export default function ShopBySection({
   title,
   items,
   backgroundColor = 'bg-white',
-  titleAlignment = 'text-center',
-  gridCols = 'grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-6 justify-center',
+  titleAlignment = 'text-left',
+  gridCols = 'grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-6',
   gap = 'gap-4 md:gap-6',
   itemWidth = '',
   imageSize = { width: 150, height: 150 },
   showDescription = false
 }) {
   return (
-    <section className={`py-20 md:py-32 ${backgroundColor}`}>
+    <section className={`py-12 md:py-16 ${backgroundColor}`}>
       <div className="container mx-auto px-6 max-w-7xl">
-        <div className={`${titleAlignment} mb-16`}>
+        <div className={`${titleAlignment} mb-12`}>
           <h2 className="text-3xl md:text-4xl font-light tracking-wider mb-4">
             {title}
           </h2>
-          <div className="w-24 h-0.5 bg-gray-400 mx-auto"></div>
+          <div className="w-24 h-0.5 bg-gray-400"></div>
         </div>
 
         <div className={gridCols}>

@@ -6,7 +6,7 @@ export const navlinks = [
     sublinks: [
       {
         name: 'Living Room',
-        href: '/furniture-living-room',
+        href: '/furniture/living-room',
         hasDropdown: true,
         sublinks: [
           {

@@ -110,18 +110,20 @@ export default function ProductCard({
     return Math.round(((regularPrice - salePrice) / regularPrice) * 100);
   };
 
-  // Get price values - handle both price/salePrice and regularPrice/salePrice structures
+  // Get price values - handle WooCommerce price structure (regular_price, sale_price)
   const getPrices = () => {
     // Debug: log the product price data
     console.log('Product price data for:', product.name, {
       price: product.price,
-      regularPrice: product.regularPrice,
-      salePrice: product.salePrice
+      regular_price: product.regular_price,
+      sale_price: product.sale_price,
+      on_sale: product.on_sale
     });
 
-    const regularPrice = product.regularPrice || product.price;
-    const salePrice = product.salePrice;
-    const hasDiscount = salePrice && Number(salePrice) < Number(regularPrice);
+    // Use WooCommerce field names: regular_price and sale_price
+    const regularPrice = product.regular_price || product.price;
+    const salePrice = product.sale_price;
+    const hasDiscount = product.on_sale && salePrice && Number(salePrice) < Number(regularPrice);
 
     console.log('Calculated prices:', {
       regularPrice,

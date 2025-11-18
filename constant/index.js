@@ -69,7 +69,7 @@ export const navlinks = [
       },
       {
         name: 'Bed Room',
-        href: '/furniture-bed-room',
+        href: '/furniture/bedroom/',
         hasDropdown: true,
         sublinks: [
           {
@@ -104,7 +104,7 @@ export const navlinks = [
       },
       {
         name: 'Dining Room',
-        href: '/furniture-dining-room',
+        href: '/furniture/dining-room/',
         hasDropdown: true,
         sublinks: [
           {

@@ -42,9 +42,14 @@ export default function ProductsGrid({ products = [], viewMode = "grid", onProdu
 
   if (!products || products.length === 0) return null;
 
-  const totalPages = Math.ceil(products.length / perPage);
+  // Sort products alphabetically by name
+  const sortedProducts = [...products].sort((a, b) =>
+    a.name?.localeCompare(b.name) || 0
+  );
+
+  const totalPages = Math.ceil(sortedProducts.length / perPage);
   const startIndex = (currentPage - 1) * perPage;
-  const currentProducts = products.slice(startIndex, startIndex + perPage);
+  const currentProducts = sortedProducts.slice(startIndex, startIndex + perPage);
 
   // Quick view functions
   const openQuickView = (product) => {

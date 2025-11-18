@@ -97,7 +97,7 @@ export default function CartManager() {
     // Navigate to checkout page
     const totals = getCartTotals();
     console.log('Proceeding to checkout with:', { items: cartItems, totals });
-    // window.location.href = '/checkout';
+    window.location.href = '/checkout';
   };
 
   const closeNotification = () => {

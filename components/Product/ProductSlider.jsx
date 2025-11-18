@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "./ProductCard";
+import { useCart } from "@/hooks/useCart";
 
 export default function ProductSlider({
   products = [],
@@ -22,6 +23,37 @@ export default function ProductSlider({
   const [slidesPerView, setSlidesPerView] = useState(slidesToShow);
   const sliderRef = useRef(null);
   const autoplayTimerRef = useRef(null);
+
+  // Cart functionality
+  const { addToCart } = useCart();
+
+  // Product action handlers
+  const handleQuickView = (product) => {
+    console.log('Quick view:', product.name);
+    // You can emit an event or use a modal here
+    window.dispatchEvent(new CustomEvent('openQuickView', {
+      detail: product
+    }));
+  };
+
+  const handleAddToCart = (product) => {
+    const success = addToCart(product, 1);
+    if (success) {
+      // Show success feedback
+      window.dispatchEvent(new CustomEvent('addToCart', {
+        detail: { product, quantity: 1 }
+      }));
+      console.log(`Added ${product.name} to cart`);
+    }
+  };
+
+  const handleProductClick = (product) => {
+    console.log('Product clicked:', product.name);
+    // Navigate to product detail page
+    if (product.slug) {
+      window.location.href = `/products/${product.slug}`;
+    }
+  };
 
   // Responsive breakpoints
   const getResponsiveSlides = () => {
@@ -119,6 +151,28 @@ export default function ProductSlider({
   const canSlideNext = currentIndex < maxIndex;
   const canSlidePrev = currentIndex > 0;
 
+  // Debug: Log product data to check price structure
+  console.log('=== PRODUCT SLIDER DEBUG ===');
+  console.log('Products received:', products);
+  console.log('Product count:', products.length);
+
+  if (products.length > 0) {
+    console.log('Sample product data:');
+    products.slice(0, 2).forEach((product, index) => {
+      console.log(`Product ${index + 1}:`, {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        salePrice: product.salePrice,
+        regularPrice: product.regularPrice,
+        sale_price: product.sale_price,  // WooCommerce field
+        regular_price: product.regular_price,  // WooCommerce field
+        on_sale: product.on_sale
+      });
+    });
+  }
+  console.log('=== END PRODUCT SLIDER DEBUG ===');
+
   // If no products or only one slide needed, don't show slider
   if (!products || products.length === 0) {
     return null;
@@ -142,6 +196,9 @@ export default function ProductSlider({
                 viewMode="grid"
                 showWishlist={true}
                 showShare={false}
+                onQuickView={handleQuickView}
+                onAddToCart={handleAddToCart}
+                onProductClick={handleProductClick}
               />
             </div>
           ))}
@@ -193,6 +250,9 @@ export default function ProductSlider({
                 viewMode="grid"
                 showWishlist={true}
                 showShare={false}
+                onQuickView={handleQuickView}
+                onAddToCart={handleAddToCart}
+                onProductClick={handleProductClick}
               />
             </div>
           ))}

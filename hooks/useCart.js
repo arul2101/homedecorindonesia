@@ -33,8 +33,10 @@ const saveCartToStorage = () => {
   }
 };
 
-// Initialize cart on first load
-loadCartFromStorage();
+// Initialize cart on first load (only on client side)
+if (typeof window !== 'undefined') {
+  loadCartFromStorage();
+}
 
 export function useCart() {
   const [cartItems, setCartItems] = useState([]);
@@ -43,11 +45,18 @@ export function useCart() {
   // Subscribe to cart changes
   useEffect(() => {
     const updateCart = (newCart) => {
+      console.log('useCart - Updating cart with:', newCart);
       setCartItems(newCart);
       setIsLoading(false);
     };
 
     cartListeners.add(updateCart);
+
+    // Ensure cart is loaded from storage on component mount
+    if (typeof window !== 'undefined') {
+      loadCartFromStorage();
+    }
+
     updateCart([...globalCartState]);
 
     return () => {

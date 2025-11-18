@@ -19,12 +19,323 @@ import {
   Package
 } from "lucide-react";
 import ProductSlider from "./ProductSlider";
+import { navlinks } from "@/constant";
+import { useCart } from "@/hooks/useCart";
 
 export default function SingleProduct({ product, relatedProducts = [], isLoading = false }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [addToCartMessage, setAddToCartMessage] = useState('');
+
+  // Use the cart hook
+  const { addToCart, cartItems, getCartTotals } = useCart();
+
+  // Function to find category path for a product based on its name and category
+  const findCategoryPath = (productName, productCategory) => {
+    // Extract keywords from product name to determine category
+    const nameLower = productName.toLowerCase();
+    const categoryLower = productCategory.toLowerCase();
+
+    // Define keywords for each category
+    const categoryKeywords = {
+      'Living Room': [
+        'sofa', 'sectional', 'corner', 'day bed', 'cleopatra', 'arm chair', 'side table',
+        'coffee table', 'bench', 'ottoman', 'pouf', 'stool', 'console', 'chest', 'drawer',
+        'sideboard', 'buffet', 'tv stand', 'room divider', 'cabinet'
+      ],
+      'Bed Room': [
+        'bed', 'headboard', 'nightstand', 'night stand', 'makeup', 'vanity', 'dresser',
+        'wardrobe', 'chest', 'tv cabinet', 'bed bench'
+      ],
+      'Dining Room': [
+        'dining table', 'dining chair', 'bar chair', 'bar stool', 'trolley', 'bar cart', 'buffet'
+      ],
+      'Home Office': [
+        'study table', 'desk', 'office chair', 'study chair', 'bookcase', 'bookshelf', 'filing'
+      ],
+      'Lighting': [
+        'ceiling light', 'pendant', 'chandelier', 'table lamp', 'floor lamp', 'wall light', 'lamp'
+      ],
+      'Decoration': [
+        'vase', 'ceramic', 'photo frame', 'bowl', 'tray', 'bookend', 'candle holder',
+        'decoration', 'accent', 'sculpture', 'art'
+      ],
+      'Wall Decor': [
+        'wall art', 'mirror', 'clock', 'painting', 'wall decor'
+      ],
+      'Cushions': [
+        'cushion', 'pillow', 'throw pillow'
+      ],
+      'Rugs': [
+        'rug', 'carpet'
+      ],
+      'Curtains': [
+        'curtain', 'drapery', 'blind'
+      ],
+      'Upholstery': [
+        'upholstery', 'fabric', 'reupholster'
+      ],
+      'Wallpapers': [
+        'wallpaper', 'wall covering'
+      ]
+    };
+
+    // Check product name keywords first
+    for (const [categoryName, keywords] of Object.entries(categoryKeywords)) {
+      if (keywords.some(keyword => nameLower.includes(keyword))) {
+        return findCategoryHref(categoryName);
+      }
+    }
+
+    // Check product category if name doesn't match
+    for (const [categoryName, keywords] of Object.entries(categoryKeywords)) {
+      if (keywords.some(keyword => categoryLower.includes(keyword))) {
+        return findCategoryHref(categoryName);
+      }
+    }
+
+    // Default fallback to Furniture if no specific category matches
+    return '/furniture';
+  };
+
+  // Helper function to find the href for a category name
+  const findCategoryHref = (categoryName) => {
+    // Search through navlinks for the category
+    for (const link of navlinks) {
+      if (link.name === categoryName) {
+        return link.href;
+      }
+      // Check sublinks
+      if (link.sublinks) {
+        for (const sublink of link.sublinks) {
+          if (sublink.name === categoryName) {
+            return sublink.href;
+          }
+        }
+      }
+    }
+    return '/furniture'; // Default fallback
+  };
+
+  // Function to get the display name of the category for breadcrumb
+  const getCategoryDisplayName = (productName, productCategory) => {
+    // Extract keywords from product name to determine category
+    const nameLower = productName.toLowerCase();
+    const categoryLower = productCategory.toLowerCase();
+
+    // Define keywords for each category (same as above but return the display name)
+    const categoryKeywords = {
+      'Living Room': [
+        'sofa', 'sectional', 'corner', 'day bed', 'cleopatra', 'arm chair', 'side table',
+        'coffee table', 'bench', 'ottoman', 'pouf', 'stool', 'console', 'chest', 'drawer',
+        'sideboard', 'buffet', 'tv stand', 'room divider', 'cabinet'
+      ],
+      'Bed Room': [
+        'bed', 'headboard', 'nightstand', 'night stand', 'makeup', 'vanity', 'dresser',
+        'wardrobe', 'chest', 'tv cabinet', 'bed bench'
+      ],
+      'Dining Room': [
+        'dining table', 'dining chair', 'bar chair', 'bar stool', 'trolley', 'bar cart', 'buffet'
+      ],
+      'Home Office': [
+        'study table', 'desk', 'office chair', 'study chair', 'bookcase', 'bookshelf', 'filing'
+      ],
+      'Lighting': [
+        'ceiling light', 'pendant', 'chandelier', 'table lamp', 'floor lamp', 'wall light', 'lamp'
+      ],
+      'Decoration': [
+        'vase', 'ceramic', 'photo frame', 'bowl', 'tray', 'bookend', 'candle holder',
+        'decoration', 'accent', 'sculpture', 'art'
+      ],
+      'Wall Decor': [
+        'wall art', 'mirror', 'clock', 'painting', 'wall decor'
+      ],
+      'Cushions': [
+        'cushion', 'pillow', 'throw pillow'
+      ],
+      'Rugs': [
+        'rug', 'carpet'
+      ],
+      'Curtains': [
+        'curtain', 'drapery', 'blind'
+      ],
+      'Upholstery': [
+        'upholstery', 'fabric', 'reupholster'
+      ],
+      'Wallpapers': [
+        'wallpaper', 'wall covering'
+      ]
+    };
+
+    // Check product name keywords first
+    for (const [categoryName, keywords] of Object.entries(categoryKeywords)) {
+      if (keywords.some(keyword => nameLower.includes(keyword))) {
+        return categoryName;
+      }
+    }
+
+    // Check product category if name doesn't match
+    for (const [categoryName, keywords] of Object.entries(categoryKeywords)) {
+      if (keywords.some(keyword => categoryLower.includes(keyword))) {
+        return categoryName;
+      }
+    }
+
+    return 'Furniture'; // Default fallback
+  };
+
+  // Function to detect subcategory and get its path from navlinks
+  const getSubcategoryInfo = (productName, productCategory, parentCategory) => {
+    const nameLower = productName.toLowerCase();
+    const categoryLower = productCategory.toLowerCase();
+
+    // Define subcategory keywords and their corresponding navlink paths
+    const subcategoryMap = {
+      // Living Room subcategories
+      'Sofas': {
+        keywords: ['sofa', 'sofas', 'sectional', 'cleopatra', 'day bed'],
+        href: '/furniture/living-room/sofas'
+      },
+      'Sectional & Corner Sofas': {
+        keywords: ['sectional', 'corner sofa'],
+        href: '/furniture/living-room/sectional-corner-sofas'
+      },
+      'Day Bed / Cleopatra': {
+        keywords: ['day bed', 'cleopatra'],
+        href: '/furniture/living-room/cleopatra-day-beds'
+      },
+      'Arm Chairs': {
+        keywords: ['arm chair', 'armchair', 'accent chair'],
+        href: '/furniture/living-room/arm-chairs'
+      },
+      'Side Table': {
+        keywords: ['side table', 'end table'],
+        href: '/furniture/living-room/side-table'
+      },
+      'Coffee Table': {
+        keywords: ['coffee table', 'cocktail table'],
+        href: '/furniture/living-room/coffee-table'
+      },
+      'Bench': {
+        keywords: ['bench', 'benches'],
+        href: '/furniture/living-room/bench'
+      },
+      'Ottoman & Pouf': {
+        keywords: ['ottoman', 'pouf', 'footstool'],
+        href: '/furniture/living-room/ottoman-pouf'
+      },
+      'Decorative Stool': {
+        keywords: ['decorative stool', 'stool'],
+        href: '/furniture/living-room/decorative-stools'
+      },
+      'Console Table': {
+        keywords: ['console', 'console table'],
+        href: '/furniture/living-room/console-tables'
+      },
+      'Chest Drawer': {
+        keywords: ['chest', 'chest of drawers', 'dresser'],
+        href: '/furniture/living-room/chests'
+      },
+      'Sideboard & Buffet': {
+        keywords: ['sideboard', 'buffet', 'credenza'],
+        href: '/furniture/living-room/buffet'
+      },
+      'TV Stand': {
+        keywords: ['tv stand', 'tv cabinet', 'media console'],
+        href: '/furniture/living-room/tv-stands'
+      },
+      'Room Deviders': {
+        keywords: ['room divider', 'screen', 'partition'],
+        href: '/furniture/living-room/room-deviders'
+      },
+
+      // Bed Room subcategories
+      'Beds': {
+        keywords: ['bed', 'bedframe'],
+        href: '/furniture/bedroom/bedsets'
+      },
+      'Headboards': {
+        keywords: ['headboard', 'head board'],
+        href: '/furniture/bedroom/headboards'
+      },
+      'Bed Side Table': {
+        keywords: ['nightstand', 'night stand', 'bedside table'],
+        href: '/furniture/bedroom/bed-side-nightstand'
+      },
+      'Make Up Table': {
+        keywords: ['makeup', 'vanity', 'dressing table'],
+        href: '/furniture/bedroom/makeup-table'
+      },
+      'Chest Of Drawers and Dressers': {
+        keywords: ['dresser', 'chest of drawers', 'wardrobe'],
+        href: '/furniture/bedroom/chest-of-drawers-and-dressers'
+      },
+      'TV Cabinets': {
+        keywords: ['tv cabinet', 'tv unit', 'media cabinet'],
+        href: '/furniture/bedroom/tv-cabinets'
+      },
+      'Bed Benches': {
+        keywords: ['bed bench', 'end of bed bench'],
+        href: '/furniture/bedroom/bed-benches'
+      },
+
+      // Dining Room subcategories
+      'Dining Table': {
+        keywords: ['dining table', 'kitchen table'],
+        href: '/furniture/dining-room/dining-tables'
+      },
+      'Dining Chairs': {
+        keywords: ['dining chair', 'kitchen chair'],
+        href: '/furniture/dining-room/dining-chairs'
+      },
+      'Bar Chair': {
+        keywords: ['bar chair', 'bar stool', 'counter stool'],
+        href: '/furniture/dining-room/bar-chairs'
+      },
+      'Trolleys & Bar Carts': {
+        keywords: ['trolley', 'bar cart', 'serving cart'],
+        href: '/furniture/dining-room/trolleys-bar-carts'
+      },
+
+      // Other categories
+      'Study Tables': {
+        keywords: ['study table', 'desk', 'writing desk'],
+        href: '/product-category/study-tables'
+      },
+      'Study Chairs': {
+        keywords: ['study chair', 'office chair', 'desk chair'],
+        href: '/product-category/office-chairs'
+      },
+      'Bookcase': {
+        keywords: ['bookcase', 'bookshelf', 'book shelf'],
+        href: '/product-category/furniture/bookcases'
+      }
+    };
+
+    // Check product name keywords first
+    for (const [subcategoryName, info] of Object.entries(subcategoryMap)) {
+      if (info.keywords.some(keyword => nameLower.includes(keyword))) {
+        return {
+          name: subcategoryName,
+          href: info.href
+        };
+      }
+    }
+
+    // Check product category if name doesn't match
+    for (const [subcategoryName, info] of Object.entries(subcategoryMap)) {
+      if (info.keywords.some(keyword => categoryLower.includes(keyword))) {
+        return {
+          name: subcategoryName,
+          href: info.href
+        };
+      }
+    }
+
+    return null; // No subcategory found
+  };
 
   // Loading state
   if (isLoading) {
@@ -73,8 +384,28 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
 
   // Format product data from WooCommerce API
   const formatProductData = (wooProduct) => {
-    // Debug: Log the raw product data to check all fields
-    console.log('Raw product data:', {
+    // Debug: Log the entire product object to see all available fields
+    console.log('=== COMPLETE PRODUCT DATA DEBUG ===');
+    console.log('Raw product object:', wooProduct);
+    console.log('Product keys:', Object.keys(wooProduct));
+
+    // Log all stock-related fields
+    console.log('Stock-related fields:');
+    Object.keys(wooProduct).forEach(key => {
+      if (key.toLowerCase().includes('stock') || key.toLowerCase().includes('inventory') || key.toLowerCase().includes('quantity')) {
+        console.log(`${key}:`, wooProduct[key], `(type: ${typeof wooProduct[key]})`);
+      }
+    });
+
+    // Check for nested stock data
+    if (wooProduct.stock_status) console.log('stock_status found:', wooProduct.stock_status);
+    if (wooProduct.manage_stock !== undefined) console.log('manage_stock found:', wooProduct.manage_stock);
+    if (wooProduct.stock_quantity !== undefined) console.log('stock_quantity found:', wooProduct.stock_quantity);
+    if (wooProduct.backorders_allowed !== undefined) console.log('backorders_allowed found:', wooProduct.backorders_allowed);
+    if (wooProduct.backorders !== undefined) console.log('backorders found:', wooProduct.backorders);
+
+    // Standard debug info
+    console.log('Standard product data:', {
       id: wooProduct.id,
       name: wooProduct.name,
       description: wooProduct.description?.substring(0, 100),
@@ -86,8 +417,10 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
       prices: wooProduct.prices,
       stock_status: wooProduct.stock_status,
       stock_quantity: wooProduct.stock_quantity,
-      manage_stock: wooProduct.manage_stock
+      manage_stock: wooProduct.manage_stock,
+      status: wooProduct.status
     });
+    console.log('=== END PRODUCT DATA DEBUG ===');
 
     // Handle different price field structures from different WooCommerce API versions
     let price = 0;
@@ -123,29 +456,78 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
     const manageStock = wooProduct.manage_stock || wooProduct.manageStock;
     const stockQuantity = wooProduct.stock_quantity || wooProduct.stockQty;
 
-    if (stockStatus === 'instock') {
-      if (manageStock === true && stockQuantity && stockQuantity > 0) {
+    console.log('Stock analysis:', {
+      stockStatus,
+      manageStock,
+      stockQuantity,
+      stockStatusType: typeof stockStatus,
+      manageStockType: typeof manageStock,
+      stockQuantityType: typeof stockQuantity
+    });
+
+    // More robust stock status checking - DEFAULT TO IN STOCK
+    let isInStock = true; // Default assumption: most products are in stock
+
+    // Only mark as out of stock if we have clear evidence
+    if (stockStatus === 'outofstock' ||
+        stockStatus === 'out of stock' ||
+        stockStatus === false) {
+      isInStock = false;
+      console.log('🔴 EXPLICIT OUT OF STOCK:', stockStatus);
+    } else if (stockStatus === 'instock' ||
+               stockStatus === 'in stock' ||
+               stockStatus === true ||
+               stockStatus === '1' ||
+               stockStatus === 1) {
+      isInStock = true;
+      console.log('🟢 EXPLICIT IN STOCK:', stockStatus);
+    } else {
+      // No explicit stock status - assume in stock (safer default)
+      isInStock = true;
+      console.log('🟡 NO STOCK STATUS FOUND - DEFAULTING TO IN STOCK');
+    }
+
+    // Apply stock quantity logic only if stock management is clearly enabled
+    if (manageStock === true && stockQuantity != null) {
+      if (stockQuantity > 0) {
         stock = parseInt(stockQuantity);
-      } else if (manageStock === false) {
-        // When stock management is disabled but item is in stock
-        stock = 999; // Large number to indicate "in stock" but no specific quantity
-      } else if (stockQuantity && stockQuantity > 0) {
-        // Fallback to stock quantity if it exists
-        stock = parseInt(stockQuantity);
+        console.log('🟢 MANAGED STOCK - Quantity:', stock);
       } else {
-        // Default to in stock with high quantity
-        stock = 999;
+        stock = 0;
+        isInStock = false;
+        console.log('🔴 MANAGED STOCK - Zero or negative quantity:', stockQuantity);
       }
     } else {
-      stock = 0; // Out of stock
+      // No stock management or no quantity - assume plentiful stock
+      stock = 999;
+      console.log('🟢 NO STOCK MANAGEMENT - DEFAULT STOCK (999)');
+    }
+
+    // Final status check
+    if (isInStock && stock > 0) {
+      console.log('✅ FINAL: PRODUCT IS IN STOCK - Quantity:', stock);
+    } else {
+      console.log('❌ FINAL: PRODUCT IS OUT OF STOCK - Quantity:', stock);
     }
 
     // Clean and format description
-    const cleanDescription = (text) => {
+    const cleanDescription = (text, isShort = false) => {
       if (!text) return "Premium quality product with excellent craftsmanship and design.";
 
-      // Remove HTML tags
-      let cleanText = text.replace(/<[^>]*>/g, '');
+      // Remove HTML tags but preserve line breaks and paragraphs
+      let cleanText = text
+        // Convert <br> tags to line breaks
+        .replace(/<br\s*\/?>/gi, '\n')
+        // Convert <p> and </p> to line breaks
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<p[^>]*>/gi, '')
+        // Convert <div> and </div> to line breaks
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<div[^>]*>/gi, '')
+        // Convert list items to bullet points
+        .replace(/<li[^>]*>/gi, '\n• ')
+        // Remove remaining HTML tags
+        .replace(/<[^>]*>/g, '');
 
       // Decode HTML entities
       cleanText = cleanText
@@ -155,21 +537,53 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
-        .replace(/&apos;/g, "'");
+        .replace(/&apos;/g, "'")
+        .replace(/&ndash;/g, '–')
+        .replace(/&mdash;/g, '—')
+        .replace(/&rsquo;/g, "'")
+        .replace(/&lsquo;/g, "'")
+        .replace(/&rdquo;/g, '"')
+        .replace(/&ldquo;/g, '"');
 
-      // Clean up whitespace
-      cleanText = cleanText.replace(/\s+/g, ' ').trim();
+      // Clean up extra whitespace and formatting
+      cleanText = cleanText
+        // Remove excessive line breaks
+        .replace(/\n{3,}/g, '\n\n')
+        // Clean up bullet points
+        .replace(/^[•\s]+/gm, '• ')
+        // Remove leading/trailing whitespace from lines
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .join('\n');
 
-      return cleanText;
+      // Apply length limits for short descriptions
+      if (isShort) {
+        cleanText = cleanText.substring(0, 200);
+        // Don't cut off in the middle of a word
+        const lastSpace = cleanText.lastIndexOf(' ');
+        if (lastSpace > 150) {
+          cleanText = cleanText.substring(0, lastSpace) + '...';
+        } else {
+          cleanText += '...';
+        }
+      }
+
+      return cleanText.trim() || "Premium quality product with excellent craftsmanship and design.";
     };
 
     return {
       id: wooProduct.id,
       name: wooProduct.name,
-      description: cleanDescription(wooProduct.description),
+      description: cleanDescription(wooProduct.short_description || wooProduct.description, true),
+      fullDescription: cleanDescription(wooProduct.description, false),
       price: price,
       salePrice: salePrice,
       regularPrice: regularPrice,
+      // Also include WooCommerce field names for compatibility
+      sale_price: salePrice,
+      regular_price: regularPrice,
+      on_sale: wooProduct.on_sale && salePrice && salePrice < regularPrice,
       images: wooProduct.images?.map((img, index) => ({
         id: img.id || index,
         src: img.src || img.url,
@@ -196,6 +610,13 @@ export default function SingleProduct({ product, relatedProducts = [], isLoading
   };
 
 const productData = formatProductData(product);
+
+  // Get category display name and path for breadcrumb
+  const categoryDisplayName = getCategoryDisplayName(productData.name, productData.category);
+  const categoryPath = findCategoryPath(productData.name, productData.category);
+
+  // Get subcategory info if available
+  const subcategoryInfo = getSubcategoryInfo(productData.name, productData.category, categoryDisplayName);
 
   // Format related products data
   const formattedRelatedProducts = relatedProducts.map(relatedProduct => {
@@ -230,16 +651,52 @@ const productData = formatProductData(product);
   };
 
   const handleAddToCart = () => {
-    // WooCommerce add to cart logic
-    const addToCartData = {
-      product_id: productData.id,
-      quantity: quantity
+    // Check if product is in stock
+    if (productData.stock <= 0) {
+      setAddToCartMessage('This product is out of stock');
+      setTimeout(() => setAddToCartMessage(''), 3000);
+      return;
+    }
+
+    // Prepare product data for cart
+    const productForCart = {
+      id: productData.id,
+      name: productData.name,
+      price: productData.price,
+      sale_price: productData.salePrice,
+      regular_price: productData.regularPrice,
+      images: productData.images,
+      sku: productData.sku
     };
 
-    console.log(`Adding to cart:`, addToCartData);
+    // Add to cart using the cart hook
+    const success = addToCart(productForCart, quantity);
 
-    // You would typically call WooCommerce API here
-    // POST /wp-json/wc/store/cart/add-item
+    if (success) {
+      setAddToCartMessage(`Added ${quantity} × ${productData.name} to cart!`);
+
+      // Emit event for cart notifications (if you have a cart notification system)
+      window.dispatchEvent(new CustomEvent('addToCart', {
+        detail: {
+          product: productForCart,
+          quantity,
+          cartItems: cartItems.length + 1,
+          cartTotal: getCartTotals()
+        }
+      }));
+
+      // Reset quantity after successful addition
+      setQuantity(1);
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setAddToCartMessage(''), 3000);
+
+      console.log(`✅ Successfully added ${quantity} × ${productData.name} to cart`);
+    } else {
+      setAddToCartMessage('Failed to add product to cart. Please try again.');
+      setTimeout(() => setAddToCartMessage(''), 3000);
+      console.error(`❌ Failed to add ${productData.name} to cart`);
+    }
   };
 
   const handleWishlist = () => {
@@ -266,9 +723,15 @@ const productData = formatProductData(product);
         <nav className="flex items-center gap-2 text-sm text-gray-600">
           <a href="/" className="hover:text-black transition-colors">Home</a>
           <ChevronRight size={14} />
-          <a href="/products" className="hover:text-black transition-colors">Products</a>
-          <ChevronRight size={14} />
-          <a href={`/products/${productData.category.toLowerCase()}`} className="hover:text-black transition-colors">{productData.category}</a>
+          <a href={categoryPath} className="hover:text-black transition-colors">{categoryDisplayName}</a>
+          {subcategoryInfo && (
+            <>
+              <ChevronRight size={14} />
+              <a href={subcategoryInfo.href} className="hover:text-black transition-colors">
+                {subcategoryInfo.name}
+              </a>
+            </>
+          )}
           <ChevronRight size={14} />
           <span className="text-black font-medium">{productData.name}</span>
         </nav>
@@ -389,7 +852,20 @@ const productData = formatProductData(product);
             </div>
 
             {/* Short Description */}
-            <p className="text-gray-600 leading-relaxed">{productData.description}</p>
+            <div className="text-gray-600 leading-relaxed">
+              {productData.description.split('\n').map((paragraph, index) => (
+                <p key={index} className={index > 0 ? 'mt-3' : ''}>
+                  {paragraph.startsWith('• ') ? (
+                    <span className="flex items-start">
+                      <span className="text-gray-400 mr-2">•</span>
+                      <span>{paragraph.substring(2)}</span>
+                    </span>
+                  ) : (
+                    paragraph
+                  )}
+                </p>
+              ))}
+            </div>
 
             {/* Color Options */}
             {productData.colors && productData.colors.length > 0 && (
@@ -432,6 +908,22 @@ const productData = formatProductData(product);
                   {productData.stock > 0 ? `${productData.stock} units available` : 'Out of stock'}
                 </span>
               </div>
+
+              {/* Add to Cart Success Message */}
+              {addToCartMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={`p-3 rounded-lg text-sm font-medium ${
+                    addToCartMessage.includes('Failed') || addToCartMessage.includes('out of stock')
+                      ? 'bg-red-100 text-red-700 border border-red-200'
+                      : 'bg-green-100 text-green-700 border border-green-200'
+                  }`}
+                >
+                  {addToCartMessage}
+                </motion.div>
+              )}
 
               <div className="flex gap-3">
                 <button
@@ -544,10 +1036,37 @@ const productData = formatProductData(product);
                 className="prose max-w-none"
               >
                 <h3 className="text-xl font-light mb-4">Product Description</h3>
-                <div
-                  className="text-gray-600 leading-relaxed mb-4"
-                  dangerouslySetInnerHTML={{ __html: productData.description }}
-                />
+                <div className="text-gray-600 leading-relaxed mb-4 space-y-4">
+                  {productData.fullDescription.split('\n\n').map((paragraph, index) => (
+                    <div key={index}>
+                      {paragraph.includes('\n') ? (
+                        // Handle paragraphs with multiple lines (like lists)
+                        paragraph.split('\n').map((line, lineIndex) => (
+                          <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+                            {line.startsWith('• ') ? (
+                              <div className="flex items-start">
+                                <span className="text-gray-400 mr-3 mt-1">•</span>
+                                <span className="flex-1">{line.substring(2)}</span>
+                              </div>
+                            ) : line.trim() ? (
+                              <p>{line}</p>
+                            ) : null}
+                          </div>
+                        ))
+                      ) : (
+                        // Handle simple paragraphs
+                        paragraph.startsWith('• ') ? (
+                          <div className="flex items-start">
+                            <span className="text-gray-400 mr-3 mt-1">•</span>
+                            <span className="flex-1">{paragraph.substring(2)}</span>
+                          </div>
+                        ) : (
+                          <p>{paragraph}</p>
+                        )
+                      )}
+                    </div>
+                  ))}
+                </div>
                 <h4 className="text-lg font-light mb-3">Key Features</h4>
                 <ul className="space-y-2">
                   {productData.features.map((feature, index) => (

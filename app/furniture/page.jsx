@@ -587,14 +587,10 @@ export default function FurniturePage() {
 
         {/* Most Popular Products Section */}
         <section className="py-16 bg-gray-50">
-            <MostPopularProducts
-                title="Most Popular Products"
-                subtitle="Discover our best-selling furniture pieces loved by our customers"
-                apiEndpoint="/wp-json/wc/v3/products?orderby=popularity&order=desc&per_page=12"
-                itemsPerSlide={4}
-                autoPlay={true}
-                autoPlayInterval={4000}
-                className="max-w-7xl mx-auto"
+            <MostPopularProducts 
+              apiEndpoint="/api/products/popular"
+              itemsPerSlide={4}
+              autoPlay={true}
             />
         </section>
 
